@@ -6,7 +6,6 @@ import egar.egartask.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController("employee")
@@ -19,12 +18,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createEmployee(@RequestBody EmpDto empDto){
+    public ResponseEntity<Employee> createEmployee(@RequestBody EmpDto empDto){
         return ResponseEntity.ok(employeeService.save(empDto));
     }
     @PatchMapping
     public ResponseEntity<EmpDto> updateEmployee(@RequestBody Employee employee){
-        return ResponseEntity.ok(employeeService.update(employee));
+        if (null!=employeeService.update(employee)){
+        return ResponseEntity.ok(employeeService.update(employee));}
+        return ResponseEntity.status(400).build();
     }
 
     @GetMapping()
@@ -38,8 +39,10 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Long id){
-        employeeService.delete(id);
-        return ResponseEntity.status(200).build();
+        if (employeeService.delete(id)) {
+            return ResponseEntity.status(200).build();
+        }
+        return ResponseEntity.status(400).build();
     }
 
     @GetMapping("/all")

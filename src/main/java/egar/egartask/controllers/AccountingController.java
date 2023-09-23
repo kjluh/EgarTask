@@ -20,12 +20,12 @@ public class AccountingController {
     }
 
     @PutMapping("come/{id}")
-    public ResponseEntity<?> ECome(@PathVariable Long id) {
+    public ResponseEntity<String> ECome(@PathVariable Long id) {
         return ResponseEntity.ok(accountingService.comeEmp(id));
     }
 
     @PutMapping("out/{id}")
-    public ResponseEntity<?> EOut(@PathVariable Long id) {
+    public ResponseEntity<String> EOut(@PathVariable Long id) {
         return ResponseEntity.ok(accountingService.outEmp(id));
     }
 

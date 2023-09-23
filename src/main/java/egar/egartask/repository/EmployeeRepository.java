@@ -10,7 +10,7 @@ import java.util.List;
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     List<Employee> findAllByNameContainsIgnoreCaseAndFamilyContainsIgnoreCase(String name, String family);
 
-    @Query(value = "select * from employee where family = ?",nativeQuery = true)
+    @Query(value = "select * from employee where family like ?%",nativeQuery = true)
     List<Employee> findByDateAndFamily(String family);
 
 }

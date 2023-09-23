@@ -26,6 +26,11 @@ public class EmployeeService {
     }
 
     public EmpDto update(Employee employee) {
+        try {
+            employeeRepository.findById(employee.getId()).orElseThrow();
+        } catch (RuntimeException e){
+            return null;
+        }
         return EmployeeMapper.mapper.toDto(employeeRepository.save(employee));
     }
 
@@ -41,7 +46,11 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public void delete(Long id) {
-               employeeRepository.deleteById(id);
+    public boolean delete(Long id) {
+        if (null== employeeRepository.findById(id).orElse(null)) {
+            return false;
+        }
+        employeeRepository.deleteById(id);
+        return true;
     }
 }

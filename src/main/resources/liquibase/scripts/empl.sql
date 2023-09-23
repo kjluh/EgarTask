@@ -8,7 +8,7 @@ CREATE TABLE employee
     family      text,
     second_name text,
     hiring_date date,
-    dismissed   BOOLEAN
+    dismissed   BOOLEAN default false
 );
 
 --changeSet Anatoly:2
