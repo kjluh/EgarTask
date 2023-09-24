@@ -25,7 +25,7 @@ class EmployeeControllerTest {
     private EmpDto empDto = new EmpDto();
 
     @BeforeEach
-    void createEmpl() throws JSONException {
+    void createEmpl() {
         employee.setId(1L);
         employee.setName("name");
         employee.setFamily("family");
@@ -43,7 +43,7 @@ class EmployeeControllerTest {
     @Test
     void createEmployee() throws Exception {
         mockMvc.perform(
-                        post("/employee").contentType(MediaType.APPLICATION_JSON).content(employee.toString()))
+                        post("/employee/").contentType(MediaType.APPLICATION_JSON).content(empDto.toString()))
                 .andExpect(status().isOk());
     }
 

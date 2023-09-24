@@ -75,7 +75,7 @@ class AccountingControllerTest {
     @Test
     void searchAll() throws Exception {
         mockMvc.perform(
-                        get("/time/search?date=2023-09-23&family=ivan"))
+                        get("/time/search/?date=2023-09-23&family=ivan"))
                 .andExpect(status().isOk());
     }
 }
