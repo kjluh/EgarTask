@@ -1,23 +1,23 @@
 package egar.egartask.controllers;
 
 import egar.egartask.entites.Employee;
+import egar.egartask.entites.WorkTime;
 import egar.egartask.repository.EmployeeRepository;
-import org.json.JSONException;
-import org.json.JSONObject;
+import egar.egartask.repository.WorkTimeRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.LocalDate;
 import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -26,57 +26,59 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AccountingControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    //    private JSONObject testJS = new JSONObject();
     private Employee employee = new Employee();
 
-    @BeforeEach
-    void createEmpl() throws JSONException {
-        employee.setId(1L);
-        employee.setName("name");
-        employee.setFamily("family");
-        employee.setSecondName("secondName");
-        employee.setDismissed(true);
-        employee.setHiringDate(LocalDate.now());
-
-//        testJS.put("id", 1);
-//        testJS.put("name", "name");
-//        testJS.put("family", "family");
-//        testJS.put("secondName", "secondName");
-//        testJS.put("hiringDate", LocalDate.now());
-//        testJS.put("dismissed", true);
-
-    }
+    private WorkTime workTime = new WorkTime();
 
     @MockBean
     private EmployeeRepository employeeRepository;
 
+    @MockBean
+    private WorkTimeRepository workTimeRepository;
+
+    @BeforeEach
+    void setUp(){
+        employee.setId(1L);
+        employee.setFamily("ivanov");
+        employee.setWorking(true);
+
+        workTime.setNow(LocalDate.now());
+        workTime.setEmployee(employee);
+    }
+
     @Test
+    @Order(1)
     void ECome() throws Exception {
         when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
         mockMvc.perform(
-                        post("/time/come/1"))
+                        put("/time/come/1"))
                 .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.name").value("name"));
     }
 
-//    @Test
-//    void EOut() {
-//when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
-//        mockMvc.perform(
-//    post("/time/come/1"))
-//            .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.name").value("name"));
-//    }
+    @Test
+    void EOut() throws Exception {
+        when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+        System.out.println(employee.getId());
+        mockMvc.perform(
+                        put("/time/out/1"))
+                .andExpect(status().isOk());
+    }
 
     @Test
     void searchAll() throws Exception {
+        when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
         mockMvc.perform(
-                        get("/time/search/?date=2023-09-23&family=ivan"))
+                        put("/time/come/1"))
                 .andExpect(status().isOk());
+
+        mockMvc.perform(
+                        get("/time/search?date=" + LocalDate.now()+"&family=ivanov"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1));
     }
 }
-//http://localhost:8080/search?date=2023-09-23&family=ivan'

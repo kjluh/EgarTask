@@ -9,4 +9,6 @@ import java.util.List;
 public interface WorkTimeRepository extends StartRepository {
      @Override
      List<WorkTime> findByEmployee_IdAndNow(Long id,LocalDate localDate);
+
+
 }

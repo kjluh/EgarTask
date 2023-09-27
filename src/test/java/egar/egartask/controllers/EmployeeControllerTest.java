@@ -1,72 +1,123 @@
 package egar.egartask.controllers;
 
-import egar.egartask.dto.EmpDto;
-import egar.egartask.entites.Employee;
-import org.json.JSONException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.json.JSONObject;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
 import java.time.LocalDate;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class EmployeeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    private static JSONObject jsonObject = new JSONObject();
 
-    private Employee employee = new Employee();
-    private EmpDto empDto = new EmpDto();
-
-    @BeforeEach
-    void createEmpl() {
-        employee.setId(1L);
-        employee.setName("name");
-        employee.setFamily("family");
-        employee.setSecondName("secondName");
-        employee.setDismissed(true);
-        employee.setHiringDate(LocalDate.now());
-
-        empDto.setName("name");
-        empDto.setFamily("family");
-        empDto.setSecondName("secondName");
-        empDto.setDismissed(true);
-        empDto.setHiringDate(LocalDate.now());
+    @BeforeAll
+    static void createJS() throws Exception {
+        jsonObject.put("id", 1);
+        jsonObject.put("name", "name");
+        jsonObject.put("family", "family");
+        jsonObject.put("SecondName", "SecondName");
+        jsonObject.put("Dismissed", true);
+        jsonObject.put("HiringDate", LocalDate.now());
     }
 
     @Test
+    @Order(1)
     void createEmployee() throws Exception {
         mockMvc.perform(
-                        post("/employee/").contentType(MediaType.APPLICATION_JSON).content(empDto.toString()))
-                .andExpect(status().isOk());
+                        post("/employee")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonObject.toString())
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("family"));
     }
 
     @Test
-    void updateEmployee() {
+    void updateEmployeeExp() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("family", "newFamily");
+        jsonObject.put("id", 11);
+        mockMvc.perform(
+                        patch("/employee")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonObject.toString())
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(400));
+    }
+    @Test
+    @Order(3)
+    void updateEmployee() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("family", "newFamily");
+        jsonObject.put("id", 1);
+        mockMvc.perform(
+                        patch("/employee")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonObject.toString())
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("newFamily"));
     }
 
     @Test
+    @Order(2)
     void getEmployee() throws Exception {
         mockMvc.perform(
                         get("/employee/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("family"));
+    }
+
+    @Test
+    void getEmployeeExp() throws Exception {
+        mockMvc.perform(
+                        get("/employee/111"))
+                .andExpect(status().is(400));
+    }
+
+    @Test
+    @Order(4)
+    void getEmployee2() throws Exception {
+        mockMvc.perform(
+                        get("/employee?name=name&family=family"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1));
+    }
+
+    @Test
+    @Order(6)
+    void deleteEmployee() throws Exception {
+        mockMvc.perform(
+                        delete("/employee/1"))
                 .andExpect(status().isOk());
     }
-
     @Test
-    void testGetEmployee() {
+    void deleteEmployeeExp() throws Exception {
+        mockMvc.perform(
+                        delete("/employee/11"))
+                .andExpect(status().is(400));
     }
 
     @Test
-    void deleteEmployee() {
+    @Order(5)
+    void getAllEmployee() throws Exception {
+        mockMvc.perform(
+                        get("/employee/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1));
     }
 
-    @Test
-    void getAllEmployee() {
-    }
 }

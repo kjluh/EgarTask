@@ -15,5 +15,5 @@ public class EmpDto {
 
     private LocalDate hiringDate;
 
-    private boolean dismissed;
+    private boolean working;
 }

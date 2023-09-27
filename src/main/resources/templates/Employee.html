@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <h1>Hello !</h1>
+</head>
+<head>
+    <h2>Invite employee</h2>
+</head>
+<form th:method="POST" th:action="@{/empDto}" th:object="${empDto}">
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name">
+
+    <br>
+
+    <label for="family">Family</label>
+    <input type="text" th:field="*{family}" id="family">
+
+    <br>
+
+    <label for="secondName">SecondName</label>
+    <input type="text" th:field="*{secondName}" id="secondName">
+
+    <input type="submit" value="Add person">
+</form>
+</html>

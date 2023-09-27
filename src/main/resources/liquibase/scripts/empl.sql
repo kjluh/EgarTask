@@ -8,7 +8,7 @@ CREATE TABLE employee
     family      text,
     second_name text,
     hiring_date date,
-    dismissed   BOOLEAN default false
+    working   BOOLEAN default false
 );
 
 --changeSet Anatoly:2
@@ -22,7 +22,7 @@ CREATE TABLE work_time
 );
 
 --changeSet Anatoly:3
-insert into employee (name, family, second_name, dismissed)
+insert into employee (name, family, second_name, working)
 values ('ivan','ivanov','ivanovish', 'tru');
-insert into employee (name, family, second_name, dismissed)
+insert into employee (name, family, second_name, working)
 values ('petr','petrovich','petrov', 'tru');
