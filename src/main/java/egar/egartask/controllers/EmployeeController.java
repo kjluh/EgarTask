@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController()
+@Controller()
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -34,8 +36,15 @@ public class EmployeeController {
             }
     )
     @PostMapping()
-    public ResponseEntity<Employee> createEmployee(@RequestBody EmpDto empDto){
-        return ResponseEntity.ok(employeeService.save(empDto));
+    public String createEmployee(@ModelAttribute("empDto") EmpDto empDto){
+        employeeService.save(empDto);
+        return "redirect:/employee/all";
+    }
+
+    @GetMapping("/new")
+    public String create(Model model){
+        model.addAttribute("empDto", new EmpDto());
+        return "newEmployee";
     }
 
     @Operation(
@@ -58,10 +67,14 @@ public class EmployeeController {
             }
     )
     @PatchMapping
-    public ResponseEntity<EmpDto> updateEmployee(@RequestBody Employee employee){
-        if (null!=employeeService.update(employee)){
-        return ResponseEntity.ok(employeeService.update(employee));}
-        return ResponseEntity.status(400).build();
+    public String updateEmployee(@ModelAttribute("employee") Employee employee){
+        employeeService.update(employee);
+        return "redirect:/employee/all";
+    }
+    @GetMapping("/update/{id}")
+    public String update(Model model, @PathVariable Long id){
+        model.addAttribute("employee", employeeService.find(id));
+        return "updateEmployee";
     }
 
     @Operation(
@@ -100,12 +113,9 @@ public class EmployeeController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployee(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(employeeService.find(id));
-        } catch (RuntimeException e){
-            return ResponseEntity.status(400).build();
-        }
+    public String getEmployee(@PathVariable Long id, Model model){
+        model.addAttribute("employee",employeeService.find(id));
+        return "employee";
     }
     @Operation(
             summary = "Удаление сотрудника из базы",
@@ -146,8 +156,8 @@ public class EmployeeController {
             }
     )
     @GetMapping("/all")
-    public ResponseEntity<List<Employee>> getAllEmployee(){
-        return ResponseEntity.ok(employeeService.getAll());
+    public String getAllEmployee(Model model){
+        model.addAttribute("getAllEmpl",employeeService.getAll());
+        return "allEmployee";
     }
-
 }

@@ -10,13 +10,12 @@ import egar.egartask.repository.EmployeeRepository;
 import egar.egartask.repository.WorkTimeRepository;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AccountingService {
@@ -24,7 +23,7 @@ public class AccountingService {
     private EmployeeRepository employeeRepository;
     private WorkTimeRepository workTimeRepository;
 
-    private EmployeeMapper  employeeMapper;
+    private EmployeeMapper employeeMapper;
 
     public AccountingService(EmployeeRepository employeeRepository, WorkTimeRepository workTimeRepository) {
         this.employeeRepository = employeeRepository;
@@ -81,14 +80,21 @@ public class AccountingService {
         }
         Month month = LocalDate.now().getMonth();
         int hour = 0;
-        for (int i = 1; i <= month.maxLength(); i++) {
-            List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id,
-                    LocalDate.of(LocalDate.now().getYear(), month, i));
-            for (WorkTime w : workTime) {
-                hour = w.getOutTime().getMinute() - w.getComeTime().getMinute();
+        List<WorkTime> workTime;
+        try {
+
+            for (int i = 1; i <= month.maxLength(); i++) {
+                workTime = workTimeRepository.findByEmployee_IdAndNow(id,
+                        LocalDate.of(LocalDate.now().getYear(), month, i));
+                for (WorkTime w : workTime) {
+                    hour += (w.getOutTime().getHour() - w.getComeTime().getHour()) * 60 +
+                            w.getOutTime().getMinute() - w.getComeTime().getMinute();
+                }
             }
+        }catch (NullPointerException e){
+            System.out.println("AAAAA");
         }
-        return employee.getName() + " отработал в " + month + " " + hour + " часов";
+        return employee.getName() + " отработал в " + month + " " + hour/60 + " часов и " + hour%60 + " минут";
     }
 
     private List<WorkTimeDto> mapperList(List<WorkTime> workTimes) {

@@ -58,7 +58,7 @@ class EmployeeControllerTest {
                 .andExpect(status().is(400));
     }
     @Test
-    @Order(3)
+    @Order(4)
     void updateEmployee() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("family", "newFamily");
@@ -89,10 +89,12 @@ class EmployeeControllerTest {
     }
 
     @Test
-    @Order(4)
+    @Order(3)
     void getEmployee2() throws Exception {
         mockMvc.perform(
-                        get("/employee?name=name&family=family"))
+                        get("/employee")
+                                .queryParam("name","name")
+                                .queryParam("family","family"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1));
     }
