@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <h1>Обновление сотрудника</h1>
 </head>
-<form th:method="PATCH" th:action="@{/employee/update/{id}(id=${employee.getId()})}" th:object="${employee}">
+<body>
+
+<form th:method="PATCH" th:action="@{/employee/{id}(id=${employee.getId()})}"
+      th:object="${employee}">
   <label for="name">Name</label>
   <input type="text" th:field="*{name}" id="name"/>
 
@@ -20,6 +23,12 @@
 
   <br>
 
+<!--  <label for="id">id</label>-->
+<!--  <input type="text" th:field="*{id}" id="id">-->
+
+<!--  <br>-->
+
   <input type="submit" value="Update person">
 </form>
+</body>
 </html>

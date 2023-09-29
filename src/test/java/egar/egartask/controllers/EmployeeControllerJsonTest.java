@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class EmployeeControllerTest {
+class EmployeeControllerJsonTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,7 +38,7 @@ class EmployeeControllerTest {
     @Order(1)
     void createEmployee() throws Exception {
         mockMvc.perform(
-                        post("/employee")
+                        post("/employeeJson")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonObject.toString())
                                 .accept(MediaType.APPLICATION_JSON))
@@ -51,7 +52,7 @@ class EmployeeControllerTest {
         jsonObject.put("family", "newFamily");
         jsonObject.put("id", 11);
         mockMvc.perform(
-                        patch("/employee")
+                        patch("/employeeJson")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonObject.toString())
                                 .accept(MediaType.APPLICATION_JSON))
@@ -64,7 +65,7 @@ class EmployeeControllerTest {
         jsonObject.put("family", "newFamily");
         jsonObject.put("id", 1);
         mockMvc.perform(
-                        patch("/employee")
+                        patch("/employeeJson")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonObject.toString())
                                 .accept(MediaType.APPLICATION_JSON))
@@ -76,7 +77,7 @@ class EmployeeControllerTest {
     @Order(2)
     void getEmployee() throws Exception {
         mockMvc.perform(
-                        get("/employee/1"))
+                        get("/employeeJson/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.family").value("family"));
     }
@@ -84,15 +85,15 @@ class EmployeeControllerTest {
     @Test
     void getEmployeeExp() throws Exception {
         mockMvc.perform(
-                        get("/employee/111"))
-                .andExpect(status().is(400));
+                        get("/employeeJson/111"))
+                .andExpect(status().is(404));
     }
 
     @Test
     @Order(3)
     void getEmployee2() throws Exception {
         mockMvc.perform(
-                        get("/employee")
+                        get("/employeeJson")
                                 .queryParam("name","name")
                                 .queryParam("family","family"))
                 .andExpect(status().isOk())
@@ -103,13 +104,13 @@ class EmployeeControllerTest {
     @Order(6)
     void deleteEmployee() throws Exception {
         mockMvc.perform(
-                        delete("/employee/1"))
+                        delete("/employeeJson/1"))
                 .andExpect(status().isOk());
     }
     @Test
     void deleteEmployeeExp() throws Exception {
         mockMvc.perform(
-                        delete("/employee/11"))
+                        delete("/employeeJson/11"))
                 .andExpect(status().is(400));
     }
 
@@ -117,7 +118,7 @@ class EmployeeControllerTest {
     @Order(5)
     void getAllEmployee() throws Exception {
         mockMvc.perform(
-                        get("/employee/all"))
+                        get("/employeeJson/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1));
     }

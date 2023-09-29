@@ -28,7 +28,7 @@ public class EmployeeService {
     public EmpDto update(Employee employee) {
         try {
             employeeRepository.findById(employee.getId()).orElseThrow();
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return null;
         }
         return EmployeeMapper.mapper.toDto(employeeRepository.save(employee));
@@ -39,7 +39,7 @@ public class EmployeeService {
     }
 
     public Employee find(Long id) {
-        return employeeRepository.findById(id).orElseThrow();
+        return employeeRepository.findById(id).orElse(null);
     }
 
     public List<Employee> getAll() {
@@ -47,7 +47,7 @@ public class EmployeeService {
     }
 
     public boolean delete(Long id) {
-        if (null== employeeRepository.findById(id).orElse(null)) {
+        if (null == employeeRepository.findById(id).orElse(null)) {
             return false;
         }
         employeeRepository.deleteById(id);
