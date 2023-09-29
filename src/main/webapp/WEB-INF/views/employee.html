@@ -8,5 +8,11 @@
 <p th:text="${employee.getFamily()}">VALUE</p>
 <p th:text="${employee.getSecondName()}">VALUE</p>
 <p th:text="${employee.getId()}">VALUE</p>
+
+<a th:href="@{/employee/update/{id}(id=${employee.getId()})}">Update</a>
+
+<form th:method="DELETE" th:action="@{/employee/{id}(id=${employee.getId()})}">
+    <input type="submit" value="Delete"/>
+</form>
 </body>
 </html>
