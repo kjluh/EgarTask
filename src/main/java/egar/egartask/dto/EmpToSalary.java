@@ -2,18 +2,12 @@ package egar.egartask.dto;
 
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
-public class EmpDto {
+public class EmpToSalary {
 
     private String name;
-
     private String family;
-
-    private String secondName;
-
-    private LocalDate hiringDate;
-
     private String departmentName;
+    private float workingTime;
+    private float salary;
 }

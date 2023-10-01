@@ -154,7 +154,7 @@ public class EmploueeControllerJson {
             }
     )
     @GetMapping("/all")
-    public ResponseEntity<List<Employee>> getAllEmployee(Model model) {
+    public ResponseEntity<List<EmpDto>> getAllEmployee(Model model) {
         return ResponseEntity.ok(employeeService.getAll());
     }
 }

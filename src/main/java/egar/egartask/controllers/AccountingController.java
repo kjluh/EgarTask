@@ -1,12 +1,15 @@
 package egar.egartask.controllers;
 
 import egar.egartask.dto.WorkTimeDto;
+import egar.egartask.dto.WorkingTimeDto;
 import egar.egartask.entites.Employee;
+import egar.egartask.entites.NotWorkingDays;
 import egar.egartask.entites.WorkTime;
 import egar.egartask.service.AccountingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +81,7 @@ public class AccountingController {
     }
 
     @Operation(
-            summary = "Получение часов отработанных сотрудником",
+            summary = "Получение часов отработанных сотрудником за прошлый месяц",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -97,13 +100,55 @@ public class AccountingController {
             }
     )
     @GetMapping("/workingTimeEmpl/{id}")
-    public ResponseEntity<?> workingTimeEmpl(@RequestParam Long id) {
+    public ResponseEntity<WorkingTimeDto> workingTimeEmpl(@RequestParam Long id) {
         if (null == accountingService.workingTime(id)) {
-            return ResponseEntity.status(400).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(accountingService.workingTime(id));
     }
 
+    @Operation(
+            summary = "Получение часов отработанных сотрудником \n" +
+                    "в определенный промежуток времени",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "сотрудник и количество часов",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
+                            )),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "сотрудник не найден",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
+                            )
+
+                    )
+            }
+    )
+    @GetMapping("/workingTimeEmplInDate/{id}")
+    public ResponseEntity<WorkingTimeDto> workingTimeEmplInDate(@PathVariable Long id,
+                                                                @RequestParam LocalDate start,
+                                                                @RequestParam LocalDate end) {
+        if (null == accountingService.workingTime(id, start, end)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(accountingService.workingTime(id));
+    }
+
+    @PostMapping("/NWD/{id}")
+    public NotWorkingDays setNotWorkingDays(@PathVariable Long id,
+                                            @RequestParam LocalDate start,
+                                            @RequestParam LocalDate end,
+                                            @RequestParam String info) {
+        return accountingService.setNotWorkingDays(id,start,end, info);
+    }
+
+    @GetMapping("/NWD/{id}")
+    public NotWorkingDays getNotWorkingDays(@PathVariable Long id){
+        return accountingService.getNotWorkingDays(id);
+    }
 }
 
 

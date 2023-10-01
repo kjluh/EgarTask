@@ -1,9 +1,6 @@
 package egar.egartask.entites;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -26,5 +23,12 @@ public class Employee {
     private LocalDate hiringDate;
 
     private boolean working;
+    /**
+     * Зарплата в час
+     */
+    private int salary;
 
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 }

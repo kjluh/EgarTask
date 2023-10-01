@@ -7,6 +7,7 @@ import egar.egartask.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,9 +20,7 @@ public class EmployeeService {
     }
 
     public Employee save(EmpDto empDto) {
-        if (empDto.getHiringDate() != null) {
-            empDto.setHiringDate(LocalDate.now());
-        }
+
         return employeeRepository.save(EmployeeMapper.mapper.toEmp(empDto));
     }
 
@@ -42,8 +41,14 @@ public class EmployeeService {
         return employeeRepository.findById(id).orElse(null);
     }
 
-    public List<Employee> getAll() {
-        return employeeRepository.findAll();
+    public List<EmpDto> getAll() {
+        List<EmpDto> list = new ArrayList<>();
+        for (Employee e : employeeRepository.findAll()) {
+            if (e.isWorking()) {
+                list.add(EmployeeMapper.mapper.toDto(e));
+            }
+        }
+        return list;
     }
 
     public boolean delete(Long id) {
@@ -52,5 +57,8 @@ public class EmployeeService {
         }
         employeeRepository.deleteById(id);
         return true;
+    }
+    public List<Employee> getAllEmployee() {
+        return employeeRepository.findAll();
     }
 }

@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface WorkTimeMapper {
-
     WorkTimeMapper mapper = Mappers.getMapper(WorkTimeMapper.class);
     WorkTimeDto toDto (WorkTime workTime);
 
