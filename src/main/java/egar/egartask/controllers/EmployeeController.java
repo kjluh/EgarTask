@@ -26,7 +26,6 @@ public class EmployeeController {
     @PostMapping()
     public String createEmployee(@ModelAttribute("empDto") EmpDto empDto){
         employeeService.save(empDto);
-
         return "redirect:/employee/all";
     }
 
@@ -59,7 +58,7 @@ public class EmployeeController {
 
     @GetMapping("/all")
     public String getAllEmployee(Model model){
-        model.addAttribute("getAllEmpl",employeeService.getAll());
+        model.addAttribute("getAllEmpl",employeeService.getAllEmployee());
         return "allEmployee";
     }
 }

@@ -10,13 +10,12 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface EmployeeMapper {
     EmployeeMapper mapper = Mappers.getMapper(EmployeeMapper.class);
-    @Mapping(
-            source = "department.departmentName",
-            target = "departmentName"
-    )
-    EmpDto toDto (Employee employee);
 
-    Employee toEmp (EmpDto empDto);
+    @Mapping(source = "department.departmentName", target = "departmentName")
+    @Mapping(source = "postEmployee.postName", target = "postEmployeeName")
+    EmpDto toDto(Employee employee);
+
+    Employee toEmp(EmpDto empDto);
 
     WorkingTimeDto toWorkingTimeDto(Employee employee);
 }

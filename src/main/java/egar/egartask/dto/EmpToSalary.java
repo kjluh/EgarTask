@@ -7,6 +7,7 @@ public class EmpToSalary {
 
     private String name;
     private String family;
+    private String postEmployeeName;
     private String departmentName;
     private float workingTime;
     private float salary;

@@ -1,5 +1,6 @@
 package egar.egartask.controllers;
 
+import egar.egartask.dto.EmpDto;
 import egar.egartask.dto.WorkTimeDto;
 import egar.egartask.dto.WorkingTimeDto;
 import egar.egartask.entites.Employee;
@@ -58,6 +59,9 @@ public class AccountingController {
     )
     @PutMapping("out/{id}")
     public ResponseEntity<String> EOut(@PathVariable Long id) {
+        if (accountingService.outEmp(id) == null) {
+            return ResponseEntity.ok("Вы не зарегистрированы в системе");
+        }
         return ResponseEntity.ok(accountingService.outEmp(id));
     }
 
@@ -74,7 +78,7 @@ public class AccountingController {
             }
     )
     @GetMapping("/search")
-    public ResponseEntity<Map<Employee, List<WorkTimeDto>>> searchAll(
+    public ResponseEntity<Map<EmpDto, List<WorkTimeDto>>> searchAll(
             @RequestParam("date") LocalDate date,
             @RequestParam("family") String family) {
         return ResponseEntity.ok(accountingService.search(date, family));
@@ -91,11 +95,7 @@ public class AccountingController {
                             )),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "сотрудник не найден",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
-
+                            description = "сотрудник не найден"
                     )
             }
     )
@@ -118,12 +118,8 @@ public class AccountingController {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE
                             )),
                     @ApiResponse(
-                            responseCode = "400",
-                            description = "сотрудник не найден",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
-
+                            responseCode = "404",
+                            description = "сотрудник не найден"
                     )
             }
     )
@@ -137,17 +133,45 @@ public class AccountingController {
         return ResponseEntity.ok(accountingService.workingTime(id));
     }
 
+    @Operation(
+            summary = "Установка нерабочих дней ( отпуск и тд)",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "нерабочие дни записаны",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Сотрудник с таким id не найден"
+                    )
+            }
+    )
     @PostMapping("/NWD/{id}")
-    public NotWorkingDays setNotWorkingDays(@PathVariable Long id,
-                                            @RequestParam LocalDate start,
-                                            @RequestParam LocalDate end,
-                                            @RequestParam String info) {
-        return accountingService.setNotWorkingDays(id,start,end, info);
+    public ResponseEntity<NotWorkingDays> setNotWorkingDays(@PathVariable Long id,
+                                                            @RequestParam LocalDate start,
+                                                            @RequestParam LocalDate end,
+                                                            @RequestParam String info) {
+        if (null == accountingService.setNotWorkingDays(id, start, end, info)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(accountingService.setNotWorkingDays(id, start, end, info));
     }
 
+    @Operation(
+            summary = "Получение отчета о нерабочих днях по id сотрудника",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "отчет найден",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+                    )
+            }
+    )
     @GetMapping("/NWD/{id}")
-    public NotWorkingDays getNotWorkingDays(@PathVariable Long id){
-        return accountingService.getNotWorkingDays(id);
+    public ResponseEntity<List<NotWorkingDays>> getNotWorkingDays(@PathVariable Long id) {
+        return ResponseEntity.ok(accountingService.getNotWorkingDays(id));
     }
 }
 

@@ -23,6 +23,9 @@ public class Employee {
     private LocalDate hiringDate;
 
     private boolean working;
+    @OneToOne
+    @JoinColumn(name = "post_employee_id")
+    private PostEmployee postEmployee;
     /**
      * Зарплата в час
      */

@@ -19,11 +19,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Base64;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -87,6 +90,17 @@ class AccountingControllerTest {
     }
 
     @Test
+    void searchAllException() throws Exception {
+        String date = String.valueOf(LocalDate.now());
+        mockMvc.perform(
+                        get("/time/search")
+                                .queryParam("family", "exep")
+                                .queryParam("date", date))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
+    }
+
+    @Test
     void workingTimeEmpl() throws Exception {
         workTime.setComeTime(LocalTime.now());
         workTime.setOutTime(LocalTime.now().plusHours(2));
@@ -96,7 +110,65 @@ class AccountingControllerTest {
 
         mockMvc.perform(
                         get("/time/workingTimeEmpl/1")
-                .queryParam("id","1"))
+                                .queryParam("id", "1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void workingTimeEmplException() throws Exception {
+        mockMvc.perform(
+                        get("/time/workingTimeEmpl/1")
+                                .queryParam("id", "22"))
+                .andExpect(status().is(404));
+    }
+
+    @Test
+    void workingTimeEmplInDate() throws Exception {
+        workTime.setComeTime(LocalTime.now());
+        workTime.setOutTime(LocalTime.now().plusHours(2));
+        workTime.setNow(LocalDate.now());
+        workTime.setEmployee(employee);
+        workTimeRepository.save(workTime);
+
+        mockMvc.perform(
+                        get("/time/workingTimeEmplInDate/1")
+                                .queryParam("start", LocalDate.now().minusMonths(20).toString())
+                                .queryParam("end", LocalDate.now().plusMonths(10).toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void setNotWorkingDays() throws Exception {
+        mockMvc.perform(
+                        post("/time/NWD/1")
+                                .queryParam("id", "1")
+                                .queryParam("start", LocalDate.now().minusMonths(10).toString())
+                                .queryParam("end", LocalDate.now().plusMonths(10).toString())
+                                .queryParam("info", "info")
+                                .header("Authorization", "Basic " +
+                                        Base64.getEncoder().encodeToString(("Admin" + ":" + "password").getBytes(StandardCharsets.UTF_8))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comment").value("info"));
+    }
+
+    @Test
+    void setNotWorkingDaysException() throws Exception {
+        mockMvc.perform(
+                        post("/time/NWD/111")
+                                .queryParam("id","111")
+                                .queryParam("start", LocalDate.now().minusMonths(10).toString())
+                                .queryParam("end", LocalDate.now().plusMonths(10).toString())
+                                .queryParam("info", "info")
+                                .header("Authorization", "Basic " +
+                                        Base64.getEncoder().encodeToString(("Admin" + ":" + "password").getBytes(StandardCharsets.UTF_8))))
+                .andExpect(status().is(404));
+    }
+
+    @Test
+    void getNotWorkingDays() throws Exception {
+        mockMvc.perform(
+                        get("/time/NWD/1")
+                                .queryParam("id", "1"))
                 .andExpect(status().isOk());
     }
 }

@@ -1,5 +1,6 @@
 package egar.egartask.service;
 
+import egar.egartask.dto.EmpDto;
 import egar.egartask.dto.WorkTimeDto;
 import egar.egartask.dto.WorkingTimeDto;
 import egar.egartask.dto.mapper.EmployeeMapper;
@@ -54,6 +55,9 @@ public class AccountingService {
 
     public String outEmp(Long id) {
         List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
+        if (workTime.size()==0){
+            return null;
+        }
         for (WorkTime w : workTime) {
             if (workTime.size() != 0 && w.getOutTime() == null) {
                 w.setOutTime(LocalTime.now());
@@ -63,11 +67,11 @@ public class AccountingService {
         return "До свидания " + employeeRepository.findById(id).orElseThrow().getName();
     }
 
-    public Map<Employee, List<WorkTimeDto>> search(LocalDate date, String family) {
+    public Map<EmpDto, List<WorkTimeDto>> search(LocalDate date, String family) {
         List<Employee> employees = employeeRepository.findByDateAndFamily(family);
-        Map<Employee, List<WorkTimeDto>> workTimes = new HashMap<>();
+        Map<EmpDto, List<WorkTimeDto>> workTimes = new HashMap<>();
         for (Employee e : employees) {
-            workTimes.put(e, mapperList(workTimeRepository.findByEmployee_IdAndNow(e.getId(), date)));
+            workTimes.put(EmployeeMapper.mapper.toDto(e), mapperList(workTimeRepository.findByEmployee_IdAndNow(e.getId(), date)));
         }
 
         return workTimes;
@@ -82,6 +86,9 @@ public class AccountingService {
                         && LocalDate.now().getYear() % 100 != 0
                         || LocalDate.now().getYear() % 400 == 0));
         WorkingTimeDto workingTimeDto = workTimeCounter(id, start, end);
+        if (workingTimeDto==null){
+            return null;
+        }
         workingTimeDto.setStart(start);
         workingTimeDto.setEnd(end);
         return workingTimeDto;
@@ -89,6 +96,9 @@ public class AccountingService {
 
     public WorkingTimeDto workingTime(Long id, LocalDate start, LocalDate end) {
         WorkingTimeDto workingTimeDto = workTimeCounter(id, start, end);
+        if (workingTimeDto==null){
+            return null;
+        }
         workingTimeDto.setStart(start);
         workingTimeDto.setStart(end);
         return workingTimeDto;
@@ -104,12 +114,12 @@ public class AccountingService {
             notWorkingDays.setFinishDate(end);
             notWorkingDays.setComment(info);
         } catch (NoSuchElementException e){
-            return notWorkingDays;
+            return null;
         }
         return notWorkingDaysRepository.save(notWorkingDays);
     }
 
-    public NotWorkingDays getNotWorkingDays(Long id) {
+    public List<NotWorkingDays> getNotWorkingDays(Long id) {
         return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
     }
 

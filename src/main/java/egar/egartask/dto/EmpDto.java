@@ -1,5 +1,6 @@
 package egar.egartask.dto;
 
+import egar.egartask.entites.PostEmployee;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -8,12 +9,9 @@ import java.time.LocalDate;
 public class EmpDto {
 
     private String name;
-
     private String family;
-
     private String secondName;
-
+    private String postEmployeeName;
     private LocalDate hiringDate;
-
     private String departmentName;
 }
