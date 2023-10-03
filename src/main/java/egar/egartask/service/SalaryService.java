@@ -9,8 +9,8 @@ import java.util.List;
 
 @Service
 public class SalaryService {
-    private EmployeeService employeeService;
-    private AccountingService accountingService;
+    private final EmployeeService employeeService;
+    private final AccountingService accountingService;
 
     public SalaryService(EmployeeService employeeService, AccountingService accountingService) {
         this.employeeService = employeeService;

@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController()
 @RequestMapping("/time")
 public class AccountingController {
-    private AccountingService accountingService;
+    private final AccountingService accountingService;
 
     public AccountingController(AccountingService accountingControllerService) {
         this.accountingService = accountingControllerService;
@@ -36,13 +36,22 @@ public class AccountingController {
                             description = "Сотрудник отметился и получил информацию",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "сотруднику не разрешен доступ",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+
                     )
             }
     )
-    @PutMapping("come/{id}")
-    public ResponseEntity<String> ECome(@PathVariable Long id) {
-        return ResponseEntity.ok(accountingService.comeEmp(id));
+    @PatchMapping("come/{id}")
+    public ResponseEntity<EmpDto> ECome(@PathVariable Long id) {
+        EmpDto empDto = accountingService.comeEmp(id);
+        if (null == empDto) {
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.ok(empDto);
     }
 
     @Operation(
@@ -53,16 +62,21 @@ public class AccountingController {
                             description = "Сотрудник отметился и получил информацию",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE
-                            )
-                    )
+                            ))
+                    , @ApiResponse(
+                    responseCode = "404",
+                    description = "сотрудник еще выходил",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            )
             }
     )
-    @PutMapping("out/{id}")
-    public ResponseEntity<String> EOut(@PathVariable Long id) {
-        if (accountingService.outEmp(id) == null) {
-            return ResponseEntity.ok("Вы не зарегистрированы в системе");
+    @PatchMapping("out/{id}")
+    public ResponseEntity<EmpDto> EOut(@PathVariable Long id) {
+        EmpDto empDto = accountingService.outEmp(id);
+        if (empDto == null) {
+            return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.ok(accountingService.outEmp(id));
+        return ResponseEntity.ok(empDto);
     }
 
     @Operation(
@@ -101,10 +115,11 @@ public class AccountingController {
     )
     @GetMapping("/workingTimeEmpl/{id}")
     public ResponseEntity<WorkingTimeDto> workingTimeEmpl(@RequestParam Long id) {
-        if (null == accountingService.workingTime(id)) {
+        WorkingTimeDto workingTimeDto = accountingService.workingTime(id);
+        if (null == workingTimeDto) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(accountingService.workingTime(id));
+        return ResponseEntity.ok(workingTimeDto);
     }
 
     @Operation(
@@ -127,10 +142,11 @@ public class AccountingController {
     public ResponseEntity<WorkingTimeDto> workingTimeEmplInDate(@PathVariable Long id,
                                                                 @RequestParam LocalDate start,
                                                                 @RequestParam LocalDate end) {
-        if (null == accountingService.workingTime(id, start, end)) {
+        WorkingTimeDto workingTimeDto = accountingService.workingTime(id, start, end);
+        if (null == workingTimeDto) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(accountingService.workingTime(id));
+        return ResponseEntity.ok(workingTimeDto);
     }
 
     @Operation(
@@ -153,10 +169,11 @@ public class AccountingController {
                                                             @RequestParam LocalDate start,
                                                             @RequestParam LocalDate end,
                                                             @RequestParam String info) {
-        if (null == accountingService.setNotWorkingDays(id, start, end, info)) {
+        NotWorkingDays notWorkingDays = accountingService.setNotWorkingDays(id, start, end, info);
+        if (null == notWorkingDays) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(accountingService.setNotWorkingDays(id, start, end, info));
+        return ResponseEntity.ok(notWorkingDays);
     }
 
     @Operation(

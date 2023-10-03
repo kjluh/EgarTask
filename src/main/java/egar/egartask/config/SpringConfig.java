@@ -14,7 +14,6 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("egar.egartask")
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;

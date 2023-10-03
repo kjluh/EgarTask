@@ -6,7 +6,6 @@ import egar.egartask.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.hibernate.annotations.NotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employeeJson")
-public class EmploueeControllerJson {
-    private EmployeeService employeeService;
+public class EmployeeControllerJson {
+    private final EmployeeService employeeService;
 
-    public EmploueeControllerJson(EmployeeService employeeService) {
+    public EmployeeControllerJson(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
@@ -62,10 +61,11 @@ public class EmploueeControllerJson {
     )
     @PatchMapping
     public ResponseEntity<EmpDto> updateEmployee(@RequestBody Employee employee) {
-        if (null == employeeService.update(employee)) {
+        EmpDto empDto = employeeService.update(employee);
+        if (null == empDto) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(employeeService.update(employee));
+        return ResponseEntity.ok(empDto);
     }
 
     @Operation(
@@ -108,10 +108,11 @@ public class EmploueeControllerJson {
     )
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
-        if (null == employeeService.find(id)) {
+        Employee employee = employeeService.find(id);
+        if (null == employee) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(employeeService.find(id));
+        return ResponseEntity.ok(employee);
     }
 
     @Operation(

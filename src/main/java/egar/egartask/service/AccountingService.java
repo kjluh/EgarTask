@@ -15,29 +15,32 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Month;
 import java.util.*;
 
 @Service
 public class AccountingService {
 
-    private EmployeeRepository employeeRepository;
-    private WorkTimeRepository workTimeRepository;
-    private NotWorkingDaysRepository notWorkingDaysRepository;
+    private final EmployeeRepository employeeRepository;
+    private final WorkTimeRepository workTimeRepository;
+    private final NotWorkingDaysRepository notWorkingDaysRepository;
+    private final EmployeeMapper employeeMapper;
+    private final WorkTimeMapper workTimeMapper;
 
-    public AccountingService(EmployeeRepository employeeRepository, WorkTimeRepository workTimeRepository, NotWorkingDaysRepository notWorkingDaysRepository) {
+    public AccountingService(EmployeeRepository employeeRepository, WorkTimeRepository workTimeRepository, NotWorkingDaysRepository notWorkingDaysRepository, EmployeeMapper employeeMapper, WorkTimeMapper workTimeMapper) {
         this.employeeRepository = employeeRepository;
         this.workTimeRepository = workTimeRepository;
         this.notWorkingDaysRepository = notWorkingDaysRepository;
+        this.employeeMapper = employeeMapper;
+        this.workTimeMapper = workTimeMapper;
     }
 
-    public String comeEmp(Long id) {
+    public EmpDto comeEmp(Long id) {
         Employee employee = employeeRepository.findById(id).orElse(null);
         if (workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now()).size() != 0) {
             List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
             for (WorkTime w : workTime) {
                 if (w.getOutTime() == null) {
-                    return "Вы еще не выходили";
+                    return null;
                 }
             }
         }
@@ -47,15 +50,15 @@ public class AccountingService {
             workTime.setNow(LocalDate.now());
             workTime.setEmployee(employee);
             workTimeRepository.save(workTime);
-            return "Добро пожаловать " + employee.getName();
+            return employeeMapper.toDto(employee);
         } else {
-            return "Вам запрещен доступ";
+            return null;
         }
     }
 
-    public String outEmp(Long id) {
+    public EmpDto outEmp(Long id) {
         List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
-        if (workTime.size()==0){
+        if (workTime.size() == 0) {
             return null;
         }
         for (WorkTime w : workTime) {
@@ -64,14 +67,14 @@ public class AccountingService {
                 workTimeRepository.save(w);
             }
         }
-        return "До свидания " + employeeRepository.findById(id).orElseThrow().getName();
+        return employeeMapper.toDto(employeeRepository.findById(id).orElse(null));
     }
 
     public Map<EmpDto, List<WorkTimeDto>> search(LocalDate date, String family) {
         List<Employee> employees = employeeRepository.findByDateAndFamily(family);
         Map<EmpDto, List<WorkTimeDto>> workTimes = new HashMap<>();
         for (Employee e : employees) {
-            workTimes.put(EmployeeMapper.mapper.toDto(e), mapperList(workTimeRepository.findByEmployee_IdAndNow(e.getId(), date)));
+            workTimes.put(employeeMapper.toDto(e), mapperList(workTimeRepository.findByEmployee_IdAndNow(e.getId(), date)));
         }
 
         return workTimes;
@@ -82,11 +85,11 @@ public class AccountingService {
         LocalDate end = LocalDate.now().minusMonths(1)
                 .withDayOfMonth(LocalDate.now().getMonth().minus(1)
                         .length(
-                LocalDate.now().getYear() % 4 == 0
-                        && LocalDate.now().getYear() % 100 != 0
-                        || LocalDate.now().getYear() % 400 == 0));
+                                LocalDate.now().getYear() % 4 == 0
+                                        && LocalDate.now().getYear() % 100 != 0
+                                        || LocalDate.now().getYear() % 400 == 0));
         WorkingTimeDto workingTimeDto = workTimeCounter(id, start, end);
-        if (workingTimeDto==null){
+        if (workingTimeDto == null) {
             return null;
         }
         workingTimeDto.setStart(start);
@@ -96,7 +99,7 @@ public class AccountingService {
 
     public WorkingTimeDto workingTime(Long id, LocalDate start, LocalDate end) {
         WorkingTimeDto workingTimeDto = workTimeCounter(id, start, end);
-        if (workingTimeDto==null){
+        if (workingTimeDto == null) {
             return null;
         }
         workingTimeDto.setStart(start);
@@ -104,19 +107,19 @@ public class AccountingService {
         return workingTimeDto;
     }
 
-    public NotWorkingDays setNotWorkingDays(Long id, LocalDate start, LocalDate end, String info){
-        NotWorkingDays notWorkingDays = new NotWorkingDays();
-        try {
-          Employee employee = employeeRepository.findById(id).orElseThrow();
-
+    public NotWorkingDays setNotWorkingDays(Long id, LocalDate start, LocalDate end, String info) {
+        Employee employee = employeeRepository.findById(id).orElse(null);
+        if (employee == null) {
+            return null;
+        } else {
+            NotWorkingDays notWorkingDays = new NotWorkingDays();
             notWorkingDays.setEmployee(employee);
             notWorkingDays.setStartDate(start);
             notWorkingDays.setFinishDate(end);
             notWorkingDays.setComment(info);
-        } catch (NoSuchElementException e){
-            return null;
+            notWorkingDaysRepository.save(notWorkingDays);
+            return notWorkingDays;
         }
-        return notWorkingDaysRepository.save(notWorkingDays);
     }
 
     public List<NotWorkingDays> getNotWorkingDays(Long id) {
@@ -126,7 +129,7 @@ public class AccountingService {
     private List<WorkTimeDto> mapperList(List<WorkTime> workTimes) {
         List<WorkTimeDto> workTimeDtoList = new ArrayList<>();
         for (int i = 0; i < workTimes.size(); i++) {
-            workTimeDtoList.add(WorkTimeMapper.mapper.toDto(workTimes.get(i)));
+            workTimeDtoList.add(workTimeMapper.toDto(workTimes.get(i)));
         }
         return workTimeDtoList;
     }
@@ -139,21 +142,17 @@ public class AccountingService {
         int hour = 0;
         List<WorkTime> workTime;
         LocalDate count = start.minusDays(1);
-        try {
-            do {
-                count = count.plusDays(1);
-                workTime = workTimeRepository.findByEmployee_IdAndNow(id, count);
-                for (WorkTime w : workTime) {
-                    hour += (w.getOutTime().getHour() - w.getComeTime().getHour()) * 60 +
-                            w.getOutTime().getMinute() - w.getComeTime().getMinute();
-                }
-            } while (!count.equals(end));
-        } catch (NullPointerException e) {
-            System.out.println("AAAAA");
-        }
+        do {
+            count = count.plusDays(1);
+            workTime = workTimeRepository.findByEmployee_IdAndNow(id, count);
+            for (WorkTime w : workTime) {
+                hour += (w.getOutTime().getHour() - w.getComeTime().getHour()) * 60 +
+                        w.getOutTime().getMinute() - w.getComeTime().getMinute();
+            }
+        } while (!count.equals(end));
         WorkingTimeDto workingTimeDto;
-        workingTimeDto = EmployeeMapper.mapper.toWorkingTimeDto(employee);
-        workingTimeDto.setWorkingTime(((float)hour / 60 + (float)hour%60/100));
+        workingTimeDto = employeeMapper.toWorkingTimeDto(employee);
+        workingTimeDto.setWorkingTime(((float) hour / 60 + (float) hour % 60 / 100));
         return workingTimeDto;
     }
 }

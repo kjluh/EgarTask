@@ -27,7 +27,7 @@ public class WebSecurityConfig {
                         .build();
         return new InMemoryUserDetailsManager(user);
     }
-// time все.  employeeJson post  department  employee salary
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity

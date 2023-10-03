@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/salary")
 public class SalaryController {
 
-    private SalaryService salaryService;
+    private final SalaryService salaryService;
 
     public SalaryController(SalaryService salaryService) {
         this.salaryService = salaryService;
@@ -55,10 +55,11 @@ public class SalaryController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<EmpToSalary> getEmplSalary(@PathVariable Long id) {
-        if (null == salaryService.getEmplSalary(id)) {
+        EmpToSalary empToSalary = salaryService.getEmplSalary(id);
+        if (null == empToSalary) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(salaryService.getEmplSalary(id));
+        return ResponseEntity.ok(empToSalary);
     }
 
     @Operation(
@@ -74,12 +75,13 @@ public class SalaryController {
                     )
             }
     )
-    @PatchMapping("/{id}/{sal}")
+    @PatchMapping("/{id}/")
     public ResponseEntity<Employee> setSalary(@PathVariable Long id,
-                                              @PathVariable Integer sal){
-        if (null == salaryService.setSalary(id, sal)) {
+                                              @RequestParam Integer sal) {
+        Employee employee = salaryService.setSalary(id, sal);
+        if (null == employee) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(salaryService.setSalary(id, sal));
+        return ResponseEntity.ok(employee);
     }
 }

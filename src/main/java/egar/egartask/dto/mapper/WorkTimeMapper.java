@@ -7,9 +7,9 @@ import egar.egartask.entites.WorkTime;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface WorkTimeMapper {
-    WorkTimeMapper mapper = Mappers.getMapper(WorkTimeMapper.class);
+
     WorkTimeDto toDto (WorkTime workTime);
 
     WorkTime toWorkTime (WorkTimeDto workTimeDto);

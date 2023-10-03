@@ -112,7 +112,9 @@ class SalaryControllerTest {
     void setSalary() throws Exception{
         when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
         mockMvc.perform(
-                        patch("/salary/1/50")       .header("Authorization", "Basic " +
+                        patch("/salary/1/")
+                                .queryParam("sal", "50")
+                                .header("Authorization", "Basic " +
                                 Base64.getEncoder().encodeToString(("Admin" + ":" + "password").getBytes(StandardCharsets.UTF_8))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.salary").value(50));

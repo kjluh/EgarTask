@@ -3,6 +3,7 @@ package egar.egartask.controllers;
 import egar.egartask.entites.Employee;
 import egar.egartask.entites.WorkTime;
 import egar.egartask.repository.EmployeeRepository;
+import egar.egartask.repository.NotWorkingDaysRepository;
 import egar.egartask.repository.WorkTimeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -44,13 +45,8 @@ class AccountingControllerTest {
     private MockMvc mockMvc;
     private Employee employee = new Employee();
 
-    private WorkTime workTime = new WorkTime();
-
-    @SpyBean
+    @Autowired
     private EmployeeRepository employeeRepository;
-
-    @SpyBean
-    private WorkTimeRepository workTimeRepository;
 
     @BeforeEach
     void setUp() {
@@ -66,16 +62,22 @@ class AccountingControllerTest {
     @Order(1)
     void ECome() throws Exception {
         mockMvc.perform(
-                        put("/time/come/1"))
-                .andExpect(status().isOk());
+                        patch("/time/come/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("ivanov"));
     }
 
     @Test
     @Order(2)
     void EOut() throws Exception {
         mockMvc.perform(
-                        put("/time/out/1"))
-                .andExpect(status().isOk());
+                        patch("/time/come/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("ivanov"));
+        mockMvc.perform(
+                        patch("/time/out/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("ivanov"));
     }
 
     @Test
@@ -102,12 +104,6 @@ class AccountingControllerTest {
 
     @Test
     void workingTimeEmpl() throws Exception {
-        workTime.setComeTime(LocalTime.now());
-        workTime.setOutTime(LocalTime.now().plusHours(2));
-        workTime.setNow(LocalDate.now());
-        workTime.setEmployee(employee);
-        workTimeRepository.save(workTime);
-
         mockMvc.perform(
                         get("/time/workingTimeEmpl/1")
                                 .queryParam("id", "1"))
@@ -124,26 +120,25 @@ class AccountingControllerTest {
 
     @Test
     void workingTimeEmplInDate() throws Exception {
-        workTime.setComeTime(LocalTime.now());
-        workTime.setOutTime(LocalTime.now().plusHours(2));
-        workTime.setNow(LocalDate.now());
-        workTime.setEmployee(employee);
-        workTimeRepository.save(workTime);
-
+        mockMvc.perform(
+                        patch("/time/come/1"));
+        mockMvc.perform(
+                        patch("/time/out/1"))
+                .andExpect(status().isOk());
         mockMvc.perform(
                         get("/time/workingTimeEmplInDate/1")
                                 .queryParam("start", LocalDate.now().minusMonths(20).toString())
                                 .queryParam("end", LocalDate.now().plusMonths(10).toString()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.family").value("ivanov"));
     }
 
     @Test
     void setNotWorkingDays() throws Exception {
         mockMvc.perform(
                         post("/time/NWD/1")
-                                .queryParam("id", "1")
-                                .queryParam("start", LocalDate.now().minusMonths(10).toString())
-                                .queryParam("end", LocalDate.now().plusMonths(10).toString())
+                                .queryParam("start", LocalDate.now().minusDays(1).toString())
+                                .queryParam("end", LocalDate.now().plusDays(1).toString())
                                 .queryParam("info", "info")
                                 .header("Authorization", "Basic " +
                                         Base64.getEncoder().encodeToString(("Admin" + ":" + "password").getBytes(StandardCharsets.UTF_8))))
@@ -169,6 +164,7 @@ class AccountingControllerTest {
         mockMvc.perform(
                         get("/time/NWD/1")
                                 .queryParam("id", "1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1));
     }
 }
