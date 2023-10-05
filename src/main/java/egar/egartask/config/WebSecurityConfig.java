@@ -20,7 +20,7 @@ public class WebSecurityConfig {
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user =
                 User.builder()
-                        .username("Admin")
+                        .username("user")
                         .password("password")
                         .passwordEncoder(passwordEncoder::encode)
                         .roles("ADMIN")
