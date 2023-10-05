@@ -21,6 +21,7 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Consumer consumer = consumerRepository.findByLoginIgnoreCase(login);
         if (consumer == null) {
