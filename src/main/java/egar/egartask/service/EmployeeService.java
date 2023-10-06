@@ -6,6 +6,9 @@ import egar.egartask.dto.mapper.WorkTimeMapper;
 import egar.egartask.entites.Employee;
 import egar.egartask.repository.EmployeeRepository;
 import egar.egartask.repository.PostEmployeeRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,6 +73,9 @@ public class EmployeeService {
         return true;
     }
 
+    public List<Employee> getAllEmployee(Integer number, Integer size) {
+        return employeeRepository.findAll(PageRequest.of(number, size)).getContent();
+    }
     public List<Employee> getAllEmployee() {
         return employeeRepository.findAll();
     }

@@ -3,6 +3,7 @@ package egar.egartask.security;
 import egar.egartask.dto.mapper.ConsumerMapper;
 import egar.egartask.entites.Consumer;
 import egar.egartask.repository.ConsumerRepository;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MyUserDetailsService implements UserDetailsService {
 
     private final ConsumerRepository consumerRepository;
-    private final MyUserDetails myUserDetails;
 
-    public MyUserDetailsService(ConsumerRepository consumerRepository, MyUserDetails myUserDetails) {
+    public MyUserDetailsService(ConsumerRepository consumerRepository) {
         this.consumerRepository = consumerRepository;
-        this.myUserDetails = myUserDetails;
     }
 
     @Override
@@ -27,7 +26,10 @@ public class MyUserDetailsService implements UserDetailsService {
         if (consumer == null) {
             throw new UsernameNotFoundException(login + "not found");
         }
-        myUserDetails.setConsumer(consumer);
-        return myUserDetails;
+        return User.builder()
+                .username(login)
+                .password(consumer.getPassword())
+                .roles(consumer.getRole().name())
+                .build();
     }
 }

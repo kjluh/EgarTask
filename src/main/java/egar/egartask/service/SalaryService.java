@@ -17,8 +17,8 @@ public class SalaryService {
         this.accountingService = accountingService;
     }
 
-    public List<EmpToSalary> getAllEmplSalary() {
-        List<Employee> employees = employeeService.getAllEmployee();
+    public List<EmpToSalary> getAllEmplSalary(Integer number, Integer size) {
+        List<Employee> employees = employeeService.getAllEmployee(number,size);
         List<EmpToSalary> empToSalaries = new ArrayList<>();
         for (Employee e : employees) {
             if (e.isWorking()) {

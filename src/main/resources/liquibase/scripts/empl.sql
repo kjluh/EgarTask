@@ -81,4 +81,5 @@ create table consumer (
     password text,
     role text
 );
-insert into consumer(login, password, role) VALUES ('Admin','password','ADMIN');
+insert into consumer(login, password, role)
+VALUES ('Admin','$2a$12$r5kvsAvblFXSPSyv5EfQt.W6TAppM3vg83Sz0NPOINYLnixK0JUf2','ADMIN');

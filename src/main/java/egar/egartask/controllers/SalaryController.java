@@ -34,8 +34,10 @@ public class SalaryController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<EmpToSalary>> getAllEmplSalary() {
-        return ResponseEntity.ok(salaryService.getAllEmplSalary());
+    public ResponseEntity<List<EmpToSalary>> getAllEmplSalary(
+            @RequestParam Integer number,
+            @RequestParam Integer size) {
+        return ResponseEntity.ok(salaryService.getAllEmplSalary(number, size));
     }
 
     @Operation(
