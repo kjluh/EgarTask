@@ -29,6 +29,7 @@ public class EmployeeService {
 
     public Employee save(EmpDto empDto) {
         Employee newEmployee = employeeMapper.toEmp(empDto);
+        newEmployee.setWorking(true);
         newEmployee.setPostEmployee(postEmployeeRepository
                 .findByPostNameContainingIgnoreCase(empDto.getPostEmployeeName()));
 

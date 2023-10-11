@@ -29,7 +29,7 @@ public class WebSecurityConfig {
                         matcherRegistry ->
                                 matcherRegistry
                                         .requestMatchers(HttpMethod.POST, "/employeeJson/**",
-                                                "/employee/**","/post/**","/department/**","/salary/**")
+                                                "/post/**", "/department/**", "/salary/**")
                                         .hasRole("ADMIN")
 //                                        .requestMatchers(HttpMethod.PUT, "/employee/**").hasRole("ADMIN")
 //                                        .requestMatchers(HttpMethod.DELETE, "/employee/**").hasRole("ADMIN")

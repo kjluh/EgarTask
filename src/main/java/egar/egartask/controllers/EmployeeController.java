@@ -35,7 +35,7 @@ public class EmployeeController {
         return "updateEmployee";
     }
 
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}")
     public String updateEmployee(
             @ModelAttribute("employee") Employee employee,
             @PathVariable Long id){
