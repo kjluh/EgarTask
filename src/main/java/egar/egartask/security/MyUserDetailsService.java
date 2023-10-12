@@ -1,6 +1,5 @@
 package egar.egartask.security;
 
-import egar.egartask.dto.mapper.ConsumerMapper;
 import egar.egartask.entites.Consumer;
 import egar.egartask.repository.ConsumerRepository;
 import org.springframework.security.core.userdetails.User;

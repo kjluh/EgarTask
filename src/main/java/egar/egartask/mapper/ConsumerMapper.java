@@ -1,4 +1,4 @@
-package egar.egartask.dto.mapper;
+package egar.egartask.mapper;
 
 import egar.egartask.dto.ConsumerDTO;
 import egar.egartask.entites.Consumer;

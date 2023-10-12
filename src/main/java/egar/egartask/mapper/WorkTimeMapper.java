@@ -1,4 +1,4 @@
-package egar.egartask.dto.mapper;
+package egar.egartask.mapper;
 
 import egar.egartask.dto.EmpDto;
 import egar.egartask.dto.WorkTimeDto;

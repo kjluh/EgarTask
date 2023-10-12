@@ -2,6 +2,7 @@ package egar.egartask.service;
 
 import egar.egartask.dto.EmpToSalary;
 import egar.egartask.entites.Employee;
+import egar.egartask.exception.MyException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class SalaryService {
     public EmpToSalary getEmplSalary(Long id) {
         Employee employee = employeeService.find(id);
         if (employee == null || !employee.isWorking()) {
-            return null;
+            throw new MyException();
         } else
             return createEmpToSalary(employee);
     }

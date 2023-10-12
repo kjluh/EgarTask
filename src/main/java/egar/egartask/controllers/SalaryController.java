@@ -2,6 +2,7 @@ package egar.egartask.controllers;
 
 import egar.egartask.dto.EmpToSalary;
 import egar.egartask.entites.Employee;
+import egar.egartask.exception.MyException;
 import egar.egartask.service.SalaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,11 +58,11 @@ public class SalaryController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<EmpToSalary> getEmplSalary(@PathVariable Long id) {
-        EmpToSalary empToSalary = salaryService.getEmplSalary(id);
-        if (null == empToSalary) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        try {
+            return ResponseEntity.ok(salaryService.getEmplSalary(id));
+        }catch (MyException exceptionDetails){
+            throw new MyException();
         }
-        return ResponseEntity.ok(empToSalary);
     }
 
     @Operation(

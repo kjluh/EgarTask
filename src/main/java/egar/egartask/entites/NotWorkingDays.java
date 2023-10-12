@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDate;
 
@@ -18,6 +19,7 @@ public class NotWorkingDays {
     private LocalDate finishDate;
     private String comment;
     @ManyToOne
+    @Lazy
     @JoinColumn(name = "employee_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Employee employee;

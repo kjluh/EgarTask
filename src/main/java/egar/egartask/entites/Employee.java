@@ -2,6 +2,7 @@ package egar.egartask.entites;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -24,6 +25,7 @@ public class Employee {
 
     private boolean working;
     @OneToOne
+    @Lazy
     @JoinColumn(name = "post_employee_id")
     private PostEmployee postEmployee;
     /**
@@ -32,6 +34,7 @@ public class Employee {
     private int salary;
 
     @ManyToOne
+    @Lazy
     @JoinColumn(name = "department_id")
     private Department department;
 }
