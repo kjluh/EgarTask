@@ -186,9 +186,12 @@ public class AccountingController {
                     )
             }
     )
-    @GetMapping("/NWD/{id}")
-    public ResponseEntity<List<NotWorkingDays>> getNotWorkingDays(@PathVariable Long id) {
-        return ResponseEntity.ok(accountingService.getNotWorkingDays(id));
+    @GetMapping("/NWD")
+    public ResponseEntity<List<NotWorkingDays>> getNotWorkingDays(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String comment
+    ) {
+        return ResponseEntity.ok(accountingService.getNotWorkingDays(id,comment));
     }
 }
 

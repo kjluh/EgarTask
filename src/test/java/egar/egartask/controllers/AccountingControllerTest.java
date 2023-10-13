@@ -162,7 +162,7 @@ class AccountingControllerTest {
     @Test
     void getNotWorkingDays() throws Exception {
         mockMvc.perform(
-                        get("/time/NWD/1")
+                        get("/time/NWD")
                                 .queryParam("id", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1));

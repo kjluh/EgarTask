@@ -24,7 +24,7 @@ public class DepartmentService {
     }
 
     public Department patchDepartment(Department department) {
-        return departmentRepository.save(department);
+        return departmentRepository.update(department);
     }
 
     public Department deleteDepartment(Long id) {

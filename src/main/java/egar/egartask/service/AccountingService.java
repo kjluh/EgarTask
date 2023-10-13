@@ -122,9 +122,15 @@ public class AccountingService {
         }
     }
 
-    public List<NotWorkingDays> getNotWorkingDays(Long id) {
-        return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
+    public List<NotWorkingDays> getNotWorkingDays(Long id, String com) {
+        if (null != id) {
+            return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
+        } else if ((null != com)) {
+            return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
+        }
+        return null;
     }
+
 
     private List<WorkTimeDto> mapperList(List<WorkTime> workTimes) {
         List<WorkTimeDto> workTimeDtoList = new ArrayList<>();

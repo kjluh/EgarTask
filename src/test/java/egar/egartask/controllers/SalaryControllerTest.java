@@ -4,9 +4,7 @@ import egar.egartask.entites.Department;
 import egar.egartask.entites.Employee;
 import egar.egartask.entites.PostEmployee;
 import egar.egartask.entites.WorkTime;
-import egar.egartask.repository.DepartmentRepository;
 import egar.egartask.repository.EmployeeRepository;
-import egar.egartask.repository.PostEmployeeRepository;
 import egar.egartask.repository.WorkTimeRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
