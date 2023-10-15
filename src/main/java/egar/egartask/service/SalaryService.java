@@ -18,6 +18,12 @@ public class SalaryService {
         this.accountingService = accountingService;
     }
 
+    /**
+     * Получение списка сотрудников с отработанными часами и зп.
+     * @param number страницы.
+     * @param size сотрудников на странице.
+     * @return список сотрудников.
+     */
     public List<EmpToSalary> getAllEmplSalary(Integer number, Integer size) {
         List<Employee> employees = employeeService.getAllEmployee(number,size);
         List<EmpToSalary> empToSalaries = new ArrayList<>();
@@ -29,6 +35,11 @@ public class SalaryService {
         return empToSalaries;
     }
 
+    /**
+     * Получение зп и отработанного времени одного сотрудника.
+     * @param id сотрудника.
+     * @return ДТОСотрудника.
+     */
     public EmpToSalary getEmplSalary(Long id) {
         Employee employee = employeeService.find(id);
         if (employee == null || !employee.isWorking()) {
@@ -37,6 +48,11 @@ public class SalaryService {
             return createEmpToSalary(employee);
     }
 
+    /**
+     * Маппер для подсчета отработанных часов и зп сотрудника за прошлый месяц.
+     * @param eOld сущность сутрудник.
+     * @return ДТО сотрудника.
+     */
     private EmpToSalary createEmpToSalary(Employee eOld) {
 
         EmpToSalary eNew = new EmpToSalary();
@@ -57,6 +73,12 @@ public class SalaryService {
         }
     }
 
+    /**
+     * Изменение зп  в час сотрудника.
+     * @param id сотрудника.
+     * @param salary зп.
+     * @return сотрудник.
+     */
     public Employee setSalary(Long id, Integer salary) {
         Employee employee = employeeService.find(id);
         if (null != employee) {
