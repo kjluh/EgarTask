@@ -16,6 +16,12 @@ private final PasswordEncoder encoder;
         this.encoder = encoder;
 
     }
+
+    /**
+     * Метод проверяет авторизацию.
+     * @param consumerDTO входные данные.
+     * @return boolean результат.
+     */
     public boolean login(ConsumerDTO consumerDTO){
         UserDetails userDetails = userDetailsService.loadUserByUsername(consumerDTO.getLogin());
         if (null==userDetails){

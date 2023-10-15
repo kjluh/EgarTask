@@ -15,18 +15,38 @@ public class DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
+    /**
+     * Сохраняем отдел в бд.
+     * @param department отдел.
+     * @return отдел.
+     */
     public Department saveDepartment(Department department) {
         return departmentRepository.save(department);
     }
 
+    /**
+     * Получаем отдел из бд.
+     * @param id отдела.
+     * @return отдел.
+     */
     public Department getDepartment(Long id) {
         return departmentRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Обновляем отдел в бд.
+     * @param department отдел.
+     * @return отдел.
+     */
     public Department patchDepartment(Department department) {
         return departmentRepository.save(department);
     }
 
+    /**
+     * Удаляем отдел из бд.
+     * @param id отдела.
+     * @return удаленный отдел.
+     */
     public Department deleteDepartment(Long id) {
         Department department = departmentRepository.findById(id).orElse(null);
         if (null == department) {
