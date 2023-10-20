@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <h1>Информация о сотруднике</h1>
 </head>
 <body>
@@ -9,9 +10,9 @@
 <p th:text="${employee.getSecondName()}">VALUE</p>
 <p th:text="${employee.getId()}">VALUE</p>
 
-<a th:href="@{/employee/update/{id}(id=${employee.getId()})}">Update</a>
+<a th:href="@{/employee/{id}/update(id=${employee.getId()})}">Update</a>
 
-<form th:method="DELETE" th:action="@{/employee/{id}(id=${employee.getId()})}">
+<form th:method="DELETE" th:action="@{/employee/{id}/del(id=${employee.getId()})}">
     <input type="submit" value="Delete"/>
 </form>
 </body>

@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    password: 12345
+    username: TestTask
+    url: jdbc:postgresql://localhost:5432/TestDB
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  docker:
+    compose:
+      enabled: false
+
+  thymeleaf:
+    check-template-location: false
+
+  mvc:
+    hidden-method:
+      filter:
+        enabled: true
+

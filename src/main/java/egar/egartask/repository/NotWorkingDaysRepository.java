@@ -4,6 +4,7 @@ import egar.egartask.entites.Consumer;
 import egar.egartask.entites.Employee;
 import egar.egartask.entites.NotWorkingDays;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Repository
 public class NotWorkingDaysRepository {
 
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
 
     public List<NotWorkingDays> getNotWorkingDaysByEmployee_Id(Long id) {

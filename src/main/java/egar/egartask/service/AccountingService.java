@@ -34,10 +34,15 @@ public class AccountingService {
         this.workTimeMapper = workTimeMapper;
     }
 
+    /**
+     * Метод, фиксирует время прихода сотрудника в бд, повторный вход не записывается.
+     * @param id сотрудника.
+     * @return дто сотрудника.
+     */
     public EmpDto comeEmp(Long id) {
         Employee employee = employeeRepository.findById(id).orElse(null);
-        if (workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now()).size() != 0) {
-            List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
+        if (workTimeRepository.findByEmployeeIdAndNow(id, LocalDate.now()).size() != 0) {
+            List<WorkTime> workTime = workTimeRepository.findByEmployeeIdAndNow(id, LocalDate.now());
             for (WorkTime w : workTime) {
                 if (w.getOutTime() == null) {
                     return null;
@@ -56,8 +61,13 @@ public class AccountingService {
         }
     }
 
+    /**
+     * Метод, фиксирует время ухода сотрудника в бд.
+     * @param id сотрудника.
+     * @return дто сотрудника.
+     */
     public EmpDto outEmp(Long id) {
-        List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
+        List<WorkTime> workTime = workTimeRepository.findByEmployeeIdAndNow(id, LocalDate.now());
         if (workTime.size() == 0) {
             return null;
         }
@@ -70,16 +80,27 @@ public class AccountingService {
         return employeeMapper.toDto(employeeRepository.findById(id).orElse(null));
     }
 
+    /**
+     * Получение данных при времени прихода и ухода сотрудника в определенный день.
+     * @param date дата для запроса.
+     * @param family сотрудника.
+     * @return  мапа приходов с уходами сотрудника.
+     */
     public Map<EmpDto, List<WorkTimeDto>> search(LocalDate date, String family) {
         List<Employee> employees = employeeRepository.findByDateAndFamily(family);
         Map<EmpDto, List<WorkTimeDto>> workTimes = new HashMap<>();
         for (Employee e : employees) {
-            workTimes.put(employeeMapper.toDto(e), mapperList(workTimeRepository.findByEmployee_IdAndNow(e.getId(), date)));
+            workTimes.put(employeeMapper.toDto(e), mapperList(workTimeRepository.findByEmployeeIdAndNow(e.getId(), date)));
         }
 
         return workTimes;
     }
 
+    /**
+     * Получение часов отработанных сотрудником за прошлый месяц.
+     * @param id сотрудника.
+     * @return сущность с данными.
+     */
     public WorkingTimeDto workingTime(Long id) {
         LocalDate start = LocalDate.now().minusMonths(1).withDayOfMonth(1);
         LocalDate end = LocalDate.now().minusMonths(1)
@@ -97,6 +118,13 @@ public class AccountingService {
         return workingTimeDto;
     }
 
+    /**
+     * Получение часов отработанных сотрудником за выбранный промежуток времени.
+     * @param id сотрудника.
+     * @param start дата начальная.
+     * @param end дата до которой запрос включительно.
+     * @return  сущность с данными.
+     */
     public WorkingTimeDto workingTime(Long id, LocalDate start, LocalDate end) {
         WorkingTimeDto workingTimeDto = workTimeCounter(id, start, end);
         if (workingTimeDto == null) {
@@ -107,6 +135,14 @@ public class AccountingService {
         return workingTimeDto;
     }
 
+    /**
+     * Запись в базу данных о нерабочих днях сотрудника.
+     * @param id сотрудника.
+     * @param start дата начальная.
+     * @param end дата конечная.
+     * @param info причина.
+     * @return сущность с данными сотрудника
+     */
     public NotWorkingDays setNotWorkingDays(Long id, LocalDate start, LocalDate end, String info) {
         Employee employee = employeeRepository.findById(id).orElse(null);
         if (employee == null) {
@@ -122,16 +158,25 @@ public class AccountingService {
         }
     }
 
-    public List<NotWorkingDays> getNotWorkingDays(Long id, String com) {
-        if (null != id) {
-            return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
-        } else if ((null != com)) {
-            return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
+    /**
+     * Получение всех периодов нерабочих дней сотрудника.
+     * @param id сотрудника.
+     * @return коллекция нерабочих дней.
+     */
+        public List<NotWorkingDays> getNotWorkingDays (Long id, String com){
+            if (null != id) {
+                return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
+            } else if ((null != com)) {
+                return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
+            }
+            return null;
         }
-        return null;
-    }
 
-
+    /**
+     * Маппер из сущности в ДТО.
+     * @param workTimes коллекция для маппига.
+     * @return List<WorkTimeDto>
+     */
     private List<WorkTimeDto> mapperList(List<WorkTime> workTimes) {
         List<WorkTimeDto> workTimeDtoList = new ArrayList<>();
         for (int i = 0; i < workTimes.size(); i++) {
@@ -140,6 +185,13 @@ public class AccountingService {
         return workTimeDtoList;
     }
 
+    /**
+     * Метод для подсчета рабочего времени.
+     * @param id сотрудника.
+     * @param start начальная дата.
+     * @param end конечная дата.
+     * @return WorkingTimeDto.
+     */
     private WorkingTimeDto workTimeCounter(Long id, LocalDate start, LocalDate end) {
         Employee employee = employeeRepository.findById(id).orElse(null);
         if (null == employee) {
@@ -150,7 +202,7 @@ public class AccountingService {
         LocalDate count = start.minusDays(1);
         do {
             count = count.plusDays(1);
-            workTime = workTimeRepository.findByEmployee_IdAndNow(id, count);
+            workTime = workTimeRepository.findByEmployeeIdAndNow(id, count);
             for (WorkTime w : workTime) {
                 hour += (w.getOutTime().getHour() - w.getComeTime().getHour()) * 60 +
                         w.getOutTime().getMinute() - w.getComeTime().getMinute();
