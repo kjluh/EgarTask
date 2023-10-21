@@ -99,6 +99,14 @@ public class SalaryService {
         }
         return employee;
     }
+
+    /**
+     * Транзакционный метод для обновления данных по зп у сотрудника и у должности
+     * @param employeeId д сотрудника
+     * @param employeeSalary новая зп сотрудника
+     * @param postId ид должности
+     * @param postSalary зп должности
+     */
     @Transactional
     public void updateSalarys(Long employeeId,
                                 Integer employeeSalary,
