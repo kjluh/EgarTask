@@ -2,21 +2,32 @@ package egar.egartask.service;
 
 import egar.egartask.dto.EmpToSalary;
 import egar.egartask.entites.Employee;
+import egar.egartask.entites.PostEmployee;
 import egar.egartask.exception.MyException;
+import egar.egartask.repository.PostEmployeeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class SalaryService {
     private final EmployeeService employeeService;
     private final AccountingService accountingService;
 
-    public SalaryService(EmployeeService employeeService, AccountingService accountingService) {
+    private final PostEmployeeRepository postEmployeeRepository;
+
+    public SalaryService(EmployeeService employeeService, AccountingService accountingService, PostEmployeeRepository postEmployeeRepository) {
         this.employeeService = employeeService;
         this.accountingService = accountingService;
+        this.postEmployeeRepository = postEmployeeRepository;
     }
+
+    private Logger logger = LoggerFactory.getLogger(SalaryService.class);
 
     /**
      * Получение списка сотрудников с отработанными часами и зп.
@@ -65,10 +76,10 @@ public class SalaryService {
             eNew.setSalary(eOld.getSalary() *
                     eOld.getDepartment().getSalaryPercent() *
                     accountingService.workingTime(eOld.getId())
-                            .getWorkingTime() * eOld.getSalary());
+                            .getWorkingTime() * eOld.getPostEmployee().getPostSalary());
             return eNew;
         } catch (NullPointerException e) {
-            eNew.setDepartmentName("НЕ УСТАНОВЛЕН!");
+            logger.info("не установлен отдел или должность");
             return eNew;
         }
     }
@@ -84,7 +95,22 @@ public class SalaryService {
         if (null != employee) {
             employee.setSalary(salary);
             employeeService.save(employee);
+
         }
         return employee;
+    }
+    @Transactional
+    public void updateSalarys(Long employeeId,
+                                Integer employeeSalary,
+                                Long postId,
+                                Float postSalary){
+        try {
+            Employee employee = employeeService.find(employeeId);
+            employee.setSalary(employeeSalary);
+            PostEmployee postEmployee = postEmployeeRepository.findById(postId).orElseThrow();
+            postEmployee.setPostSalary(postSalary);
+        } catch (RuntimeException e){
+            throw new MyException();
+        }
     }
 }

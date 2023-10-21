@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <h1>Список сотрудников</h1>
 </head>
 <body>
 
 <div th:each="employee : ${getAllEmpl}">
-    <a th:href="@{/employee/{id}(id=${employee.getId()})}" th:text="${employee.getFamily()}">user</a>
+    <a th:href="@{/employee/{id}(id=${employee.getId()})}"
+       th:text="${employee.getFamily() + ' ' + employee.getName()}">user</a>
+
 
 </div>
 

@@ -11,5 +11,5 @@ import java.util.List;
 @NoRepositoryBean
 public interface StartRepository extends JpaRepository<WorkTime,Long> {
 
-    List<WorkTime> findByEmployee_IdAndNow(Long id, LocalDate localDate);
+    List<WorkTime> findByEmployeeIdAndNow(Long id, LocalDate localDate);
 }

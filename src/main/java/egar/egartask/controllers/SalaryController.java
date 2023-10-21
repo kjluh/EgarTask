@@ -87,4 +87,17 @@ public class SalaryController {
         }
         return ResponseEntity.ok(employee);
     }
+
+    @PatchMapping("/updateSalary")
+    public ResponseEntity<?> updateSalarys(@RequestParam Long employeeId,
+                                          @RequestParam Integer employeeSalary,
+                                          @RequestParam Long postId,
+                                          @RequestParam Float postSalary){
+        try {
+            salaryService.updateSalarys(employeeId,employeeSalary,postId,postSalary);
+            return ResponseEntity.ok().build();
+        }catch (MyException exceptionDetails){
+            throw new MyException();
+        }
+    }
 }

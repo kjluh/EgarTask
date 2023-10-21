@@ -41,8 +41,8 @@ public class AccountingService {
      */
     public EmpDto comeEmp(Long id) {
         Employee employee = employeeRepository.findById(id).orElse(null);
-        if (workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now()).size() != 0) {
-            List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
+        if (workTimeRepository.findByEmployeeIdAndNow(id, LocalDate.now()).size() != 0) {
+            List<WorkTime> workTime = workTimeRepository.findByEmployeeIdAndNow(id, LocalDate.now());
             for (WorkTime w : workTime) {
                 if (w.getOutTime() == null) {
                     return null;
@@ -67,7 +67,7 @@ public class AccountingService {
      * @return дто сотрудника.
      */
     public EmpDto outEmp(Long id) {
-        List<WorkTime> workTime = workTimeRepository.findByEmployee_IdAndNow(id, LocalDate.now());
+        List<WorkTime> workTime = workTimeRepository.findByEmployeeIdAndNow(id, LocalDate.now());
         if (workTime.size() == 0) {
             return null;
         }
@@ -90,7 +90,7 @@ public class AccountingService {
         List<Employee> employees = employeeRepository.findByDateAndFamily(family);
         Map<EmpDto, List<WorkTimeDto>> workTimes = new HashMap<>();
         for (Employee e : employees) {
-            workTimes.put(employeeMapper.toDto(e), mapperList(workTimeRepository.findByEmployee_IdAndNow(e.getId(), date)));
+            workTimes.put(employeeMapper.toDto(e), mapperList(workTimeRepository.findByEmployeeIdAndNow(e.getId(), date)));
         }
 
         return workTimes;
@@ -163,17 +163,14 @@ public class AccountingService {
      * @param id сотрудника.
      * @return коллекция нерабочих дней.
      */
-    public List<NotWorkingDays> getNotWorkingDays(Long id) {
-        return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
-    public List<NotWorkingDays> getNotWorkingDays(Long id, String com) {
-        if (null != id) {
-            return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
-        } else if ((null != com)) {
-            return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
+        public List<NotWorkingDays> getNotWorkingDays (Long id, String com){
+            if (null != id) {
+                return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
+            } else if ((null != com)) {
+                return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
+            }
+            return null;
         }
-        return null;
-    }
-
 
     /**
      * Маппер из сущности в ДТО.
@@ -205,7 +202,7 @@ public class AccountingService {
         LocalDate count = start.minusDays(1);
         do {
             count = count.plusDays(1);
-            workTime = workTimeRepository.findByEmployee_IdAndNow(id, count);
+            workTime = workTimeRepository.findByEmployeeIdAndNow(id, count);
             for (WorkTime w : workTime) {
                 hour += (w.getOutTime().getHour() - w.getComeTime().getHour()) * 60 +
                         w.getOutTime().getMinute() - w.getComeTime().getMinute();

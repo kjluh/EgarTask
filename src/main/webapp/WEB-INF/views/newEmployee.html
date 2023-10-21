@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <h1>Добавление сотрудника</h1>
 </head>
 <form th:method="POST" th:action="@{/employee}" th:object="${empDto}">
@@ -19,8 +20,8 @@
 
     <br>
 
-    <label for="hiringDate">HiringDate</label>
-    <input type="text" th:field="*{hiringDate}" id="hiringDate">
+<!--    <label for="hiringDate">HiringDate</label>-->
+<!--    <input type="text" th:field="*{hiringDate}" id="hiringDate">-->
 
 
     <input type="submit" value="Add person">

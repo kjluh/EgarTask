@@ -2,6 +2,7 @@ package egar.egartask.repository;
 
 import egar.egartask.entites.Department;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.Optional;
 @Transactional
 public class DepartmentRepository {
 
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
 
 

@@ -88,7 +88,7 @@ class SalaryControllerTest {
         List<WorkTime> list = new ArrayList<>();
         list.add(workTime);
         when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
-        when(workTimeRepository.findByEmployee_IdAndNow(any(),any())).thenReturn(list);
+        when(workTimeRepository.findByEmployeeIdAndNow(any(),any())).thenReturn(list);
         mockMvc.perform(
                         get("/salary/1")
                 .header("Authorization", "Basic " +

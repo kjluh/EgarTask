@@ -3,9 +3,7 @@ package egar.egartask.controllers;
 import egar.egartask.dto.EmpDto;
 import egar.egartask.dto.WorkTimeDto;
 import egar.egartask.dto.WorkingTimeDto;
-import egar.egartask.entites.Employee;
 import egar.egartask.entites.NotWorkingDays;
-import egar.egartask.entites.WorkTime;
 import egar.egartask.service.AccountingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,7 +44,7 @@ public class AccountingController {
             }
     )
     @PatchMapping("come/{id}")
-    public ResponseEntity<EmpDto> ECome(@PathVariable Long id) {
+    public ResponseEntity<EmpDto> eCome(@PathVariable Long id) {
         EmpDto empDto = accountingService.comeEmp(id);
         if (null == empDto) {
             return ResponseEntity.status(400).build();
@@ -71,7 +69,7 @@ public class AccountingController {
             }
     )
     @PatchMapping("out/{id}")
-    public ResponseEntity<EmpDto> EOut(@PathVariable Long id) {
+    public ResponseEntity<EmpDto> eOut(@PathVariable Long id) {
         EmpDto empDto = accountingService.outEmp(id);
         if (empDto == null) {
             return ResponseEntity.status(404).build();
