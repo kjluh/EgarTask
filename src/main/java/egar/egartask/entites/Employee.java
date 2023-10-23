@@ -24,7 +24,7 @@ public class Employee {
     private LocalDate hiringDate;
 
     private boolean working;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "post_employee_id")
     private PostEmployee postEmployee;
     /**
@@ -32,7 +32,7 @@ public class Employee {
      */
     private int salary;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "department_id")
     private Department department;
 }

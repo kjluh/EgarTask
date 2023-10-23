@@ -40,6 +40,12 @@ public class NotWorkingDaysRepository {
         return list;
     }
 
+    public List<NotWorkingDays> getNotWorkingDaysByCommentsAndId(Long id, String com) {
+        TypedQuery<NotWorkingDays> query = entityManager.createQuery(
+                "select n from NotWorkingDays n where n.employee.id=:id and n.comment like :com", NotWorkingDays.class);
+        return query.setParameter("id", id).setParameter("com",com).getResultList();
+    }
+
     @Transactional
     public void save(NotWorkingDays notWorkingDays) {
         entityManager.persist(notWorkingDays);

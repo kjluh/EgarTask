@@ -164,11 +164,13 @@ public class AccountingService {
      * @return коллекция нерабочих дней.
      */
         public List<NotWorkingDays> getNotWorkingDays (Long id, String com){
-            if (null != id) {
-                return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
-            } else if ((null != com)) {
+            if (null != id && null != com) {
+                return notWorkingDaysRepository.getNotWorkingDaysByCommentsAndId(id,com);
+            } else if (null != com) {
                 return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
-            }
+            } else if(null != id) {
+                return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
+            } else
             return null;
         }
 
