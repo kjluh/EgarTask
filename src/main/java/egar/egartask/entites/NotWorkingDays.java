@@ -18,8 +18,7 @@ public class NotWorkingDays {
     private LocalDate startDate;
     private LocalDate finishDate;
     private String comment;
-    @ManyToOne
-    @Lazy
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Employee employee;

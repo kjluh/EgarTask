@@ -5,6 +5,7 @@ import egar.egartask.entites.PostEmployee;
 import egar.egartask.repository.DepartmentRepository;
 import egar.egartask.repository.PostEmployeeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DepartmentService {
@@ -20,6 +21,7 @@ public class DepartmentService {
      * @param department отдел.
      * @return отдел.
      */
+    @Transactional
     public Department saveDepartment(Department department) {
         return departmentRepository.save(department);
     }
@@ -38,6 +40,7 @@ public class DepartmentService {
      * @param department отдел.
      * @return отдел.
      */
+    @Transactional
     public Department patchDepartment(Department department) {
         return departmentRepository.update(department);
     }
@@ -47,6 +50,7 @@ public class DepartmentService {
      * @param id отдела.
      * @return удаленный отдел.
      */
+    @Transactional
     public Department deleteDepartment(Long id) {
         Department department = departmentRepository.findById(id).orElse(null);
         if (null == department) {

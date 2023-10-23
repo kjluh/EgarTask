@@ -2,7 +2,6 @@ package egar.egartask.controllers;
 
 import egar.egartask.dto.EmpToSalary;
 import egar.egartask.entites.Employee;
-import egar.egartask.exception.MyException;
 import egar.egartask.service.SalaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -58,11 +57,7 @@ public class SalaryController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<EmpToSalary> getEmplSalary(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(salaryService.getEmplSalary(id));
-        }catch (MyException exceptionDetails){
-            throw new MyException();
-        }
+        return ResponseEntity.ok(salaryService.getEmplSalary(id));
     }
 
     @Operation(
@@ -88,16 +83,18 @@ public class SalaryController {
         return ResponseEntity.ok(employee);
     }
 
+    @Operation(
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "изменения сохранены"),
+                    @ApiResponse(responseCode = "400", description = "что-то не та")
+            }
+    )
     @PatchMapping("/updateSalary")
     public ResponseEntity<?> updateSalarys(@RequestParam Long employeeId,
-                                          @RequestParam Integer employeeSalary,
-                                          @RequestParam Long postId,
-                                          @RequestParam Float postSalary){
-        try {
-            salaryService.updateSalarys(employeeId,employeeSalary,postId,postSalary);
-            return ResponseEntity.ok().build();
-        }catch (MyException exceptionDetails){
-            throw new MyException();
-        }
+                                           @RequestParam Integer employeeSalary,
+                                           @RequestParam Long postId,
+                                           @RequestParam Float postSalary) {
+        salaryService.updateSalarys(employeeId, employeeSalary, postId, postSalary);
+        return ResponseEntity.ok().build();
     }
 }

@@ -22,8 +22,7 @@ public class WorkTime {
 
     private LocalDate now;
 
-    @ManyToOne
-    @Lazy
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Employee employee;
