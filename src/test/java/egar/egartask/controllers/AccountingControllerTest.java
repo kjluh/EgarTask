@@ -121,7 +121,7 @@ class AccountingControllerTest {
     @Test
     void workingTimeEmplInDate() throws Exception {
         mockMvc.perform(
-                        patch("/time/come/1"));
+                patch("/time/come/1"));
         mockMvc.perform(
                         patch("/time/out/1"))
                 .andExpect(status().isOk());
@@ -139,9 +139,7 @@ class AccountingControllerTest {
                         post("/time/NWD/1")
                                 .queryParam("start", LocalDate.now().minusDays(1).toString())
                                 .queryParam("end", LocalDate.now().plusDays(1).toString())
-                                .queryParam("info", "info")
-                                .header("Authorization", "Basic " +
-                                        Base64.getEncoder().encodeToString(("Admin" + ":" + "password").getBytes(StandardCharsets.UTF_8))))
+                                .queryParam("info", "info"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.comment").value("info"));
     }
@@ -150,12 +148,10 @@ class AccountingControllerTest {
     void setNotWorkingDaysException() throws Exception {
         mockMvc.perform(
                         post("/time/NWD/111")
-                                .queryParam("id","111")
+                                .queryParam("id", "111")
                                 .queryParam("start", LocalDate.now().minusMonths(10).toString())
                                 .queryParam("end", LocalDate.now().plusMonths(10).toString())
-                                .queryParam("info", "info")
-                                .header("Authorization", "Basic " +
-                                        Base64.getEncoder().encodeToString(("Admin" + ":" + "password").getBytes(StandardCharsets.UTF_8))))
+                                .queryParam("info", "info"))
                 .andExpect(status().is(404));
     }
 
