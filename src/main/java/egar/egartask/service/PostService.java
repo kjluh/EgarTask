@@ -1,6 +1,8 @@
 package egar.egartask.service;
 
+import egar.egartask.dto.PostEmployeeDto;
 import egar.egartask.entites.PostEmployee;
+import egar.egartask.mapper.PostEmployeeMapper;
 import egar.egartask.repository.PostEmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -8,9 +10,12 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
     private final PostEmployeeRepository postEmployeeRepository;
+    private final PostEmployeeMapper postEmployeeMapper;
 
-    public PostService(PostEmployeeRepository postEmployeeRepository) {
+    public PostService(PostEmployeeRepository postEmployeeRepository,
+                       PostEmployeeMapper postEmployeeMapper) {
         this.postEmployeeRepository = postEmployeeRepository;
+        this.postEmployeeMapper = postEmployeeMapper;
     }
 
     /**
@@ -18,8 +23,9 @@ public class PostService {
      * @param id должности.
      * @return должность.
      */
-    public PostEmployee getPostEmployee(Long id) {
-        return postEmployeeRepository.findById(id).orElse(null);
+    public PostEmployeeDto getPostEmployee(Long id) {
+        PostEmployee postEmployee = postEmployeeRepository.findById(id).orElse(null);
+        return postEmployee!= null ? postEmployeeMapper.toPostEmployeeDto(postEmployee) : null;
     }
 
     /**
@@ -27,9 +33,9 @@ public class PostService {
      * @param postEmployee должность.
      * @return должность.
      */
-    public PostEmployee createPostEmployee(PostEmployee postEmployee) {
+    public PostEmployeeDto createPostEmployee(PostEmployee postEmployee) {
         if (null == postEmployeeRepository.findByPostNameContainingIgnoreCase(postEmployee.getPostName())) {
-            return postEmployeeRepository.save(postEmployee);
+            return postEmployeeMapper.toPostEmployeeDto(postEmployeeRepository.save(postEmployee));
         } else
             return null;
     }
@@ -39,11 +45,11 @@ public class PostService {
      * @param postEmployee должность.
      * @return должность.
      */
-    public PostEmployee updatePostEmployee(PostEmployee postEmployee) {
+    public PostEmployeeDto updatePostEmployee(PostEmployee postEmployee) {
         if (null==postEmployeeRepository.findById(postEmployee.getId()).orElse(null)){
             return null;
         }
-        return postEmployeeRepository.save(postEmployee);
+        return postEmployeeMapper.toPostEmployeeDto(postEmployeeRepository.save(postEmployee));
     }
 
     /**
@@ -51,13 +57,13 @@ public class PostService {
      * @param id должности.
      * @return должность.
      */
-    public PostEmployee deletePostEmployee(Long id) {
+    public PostEmployeeDto deletePostEmployee(Long id) {
         PostEmployee postEmployee = postEmployeeRepository.findById(id).orElse(null);
         if (null == postEmployeeRepository.findById(postEmployee.getId()).orElse(null)) {
             return null;
         } else {
             postEmployeeRepository.deleteById(id);
-            return postEmployee;
+            return postEmployeeMapper.toPostEmployeeDto(postEmployee);
         }
     }
 }

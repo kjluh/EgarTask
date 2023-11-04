@@ -1,10 +1,14 @@
 package egar.egartask.controllers;
 
+import egar.egartask.entites.Consumer;
+import egar.egartask.entites.Role;
+import egar.egartask.repository.ConsumerRepository;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Base64;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -26,6 +32,11 @@ class EmployeeControllerJsonTest {
     private MockMvc mockMvc;
     private static JSONObject jsonObject = new JSONObject();
 
+    @MockBean
+    private ConsumerRepository consumerRepository;
+
+    private static Consumer admin = new Consumer();
+
     @BeforeAll
     static void createJS() throws Exception {
         jsonObject.put("id", 1);
@@ -34,11 +45,16 @@ class EmployeeControllerJsonTest {
         jsonObject.put("SecondName", "SecondName");
         jsonObject.put("Dismissed", true);
         jsonObject.put("HiringDate", LocalDate.now());
+
+        admin.setLogin("Admin");
+        admin.setPassword("$2a$12$r5kvsAvblFXSPSyv5EfQt.W6TAppM3vg83Sz0NPOINYLnixK0JUf2");
+        admin.setRole(Role.ADMIN);
     }
 
     @Test
     @Order(1)
     void createEmployee() throws Exception {
+        when(consumerRepository.findByLoginIgnoreCase(any())).thenReturn(admin);
         mockMvc.perform(
                         post("/employeeJson")
                                 .contentType(MediaType.APPLICATION_JSON)

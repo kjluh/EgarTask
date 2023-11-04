@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -25,13 +26,14 @@ public class EmployeeService {
         this.employeeMapper = employeeMapper;
     }
 
-    public Employee save(EmpDto empDto) {
+    public EmpDto save(EmpDto empDto) {
         Employee newEmployee = employeeMapper.toEmp(empDto);
         newEmployee.setWorking(true);
         newEmployee.setPostEmployee(postEmployeeRepository
                 .findByPostNameContainingIgnoreCase(empDto.getPostEmployeeName()));
+        employeeRepository.save(newEmployee);
 
-        return employeeRepository.save(newEmployee);
+        return empDto;
     }
 
     public Employee save(Employee employee) {
@@ -46,12 +48,17 @@ public class EmployeeService {
         return employeeMapper.toDto(employeeRepository.save(employee));
     }
 
-    public List<Employee> get(String name, String family) {
-        return employeeRepository.findAllByNameContainsIgnoreCaseAndFamilyContainsIgnoreCase(name, family);
+    public List<EmpDto> get(String name, String family) {
+        return employeeRepository.findAllByNameContainsIgnoreCaseAndFamilyContainsIgnoreCase(name, family)
+                .stream().map(employeeMapper::toDto).collect(Collectors.toList());
     }
 
     public Employee find(Long id) {
         return employeeRepository.findById(id).orElse(null);
+    }
+
+    public EmpDto findDto(Long id) {
+        return employeeMapper.toDto(employeeRepository.findById(id).orElse(null));
     }
 
     public List<EmpDto> getAll() {

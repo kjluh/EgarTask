@@ -1,5 +1,6 @@
 package egar.egartask.controllers;
 
+import egar.egartask.dto.DepartmentDto;
 import egar.egartask.entites.Department;
 import egar.egartask.service.DepartmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,7 @@ public class DepartmentController {
             }
     )
     @PostMapping()
-    public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
+    public ResponseEntity<DepartmentDto> createDepartment(@RequestBody Department department) {
         return ResponseEntity.ok(departmentService.saveDepartment(department));
     }
 
@@ -51,8 +52,8 @@ public class DepartmentController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<Department> getDepartment(@PathVariable Long id) {
-        Department department =departmentService.getDepartment(id);
+    public ResponseEntity<DepartmentDto> getDepartment(@PathVariable Long id) {
+        DepartmentDto department = departmentService.getDepartment(id);
         if (null == department) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -75,12 +76,12 @@ public class DepartmentController {
             }
     )
     @PatchMapping()
-    public ResponseEntity<Department> updateDepartment(@RequestBody Department department) {
-        Department d = departmentService.patchDepartment(department);
-        if (null == d) {
+    public ResponseEntity<DepartmentDto> updateDepartment(@RequestBody Department department) {
+        DepartmentDto departmentDto = departmentService.patchDepartment(department);
+        if (null == departmentDto) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(d);
+        return ResponseEntity.ok(departmentDto);
     }
 
     @Operation(
@@ -99,8 +100,8 @@ public class DepartmentController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Department> deleteDepartment(@PathVariable Long id) {
-       Department department = departmentService.deleteDepartment(id);
+    public ResponseEntity<DepartmentDto> deleteDepartment(@PathVariable Long id) {
+       DepartmentDto department = departmentService.deleteDepartment(id);
         if (null == department) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

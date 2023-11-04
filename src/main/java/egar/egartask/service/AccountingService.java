@@ -1,9 +1,11 @@
 package egar.egartask.service;
 
 import egar.egartask.dto.EmpDto;
+import egar.egartask.dto.NotWorkingDaysDto;
 import egar.egartask.dto.WorkTimeDto;
 import egar.egartask.dto.WorkingTimeDto;
 import egar.egartask.mapper.EmployeeMapper;
+import egar.egartask.mapper.NotWorkingDaysMapper;
 import egar.egartask.mapper.WorkTimeMapper;
 import egar.egartask.entites.Employee;
 import egar.egartask.entites.NotWorkingDays;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountingService {
@@ -25,13 +28,16 @@ public class AccountingService {
     private final NotWorkingDaysRepository notWorkingDaysRepository;
     private final EmployeeMapper employeeMapper;
     private final WorkTimeMapper workTimeMapper;
+    private final NotWorkingDaysMapper notWorkingDaysMapper;
 
-    public AccountingService(EmployeeRepository employeeRepository, WorkTimeRepository workTimeRepository, NotWorkingDaysRepository notWorkingDaysRepository, EmployeeMapper employeeMapper, WorkTimeMapper workTimeMapper) {
+    public AccountingService(EmployeeRepository employeeRepository, WorkTimeRepository workTimeRepository, NotWorkingDaysRepository notWorkingDaysRepository, EmployeeMapper employeeMapper, WorkTimeMapper workTimeMapper,
+                             NotWorkingDaysMapper notWorkingDaysMapper) {
         this.employeeRepository = employeeRepository;
         this.workTimeRepository = workTimeRepository;
         this.notWorkingDaysRepository = notWorkingDaysRepository;
         this.employeeMapper = employeeMapper;
         this.workTimeMapper = workTimeMapper;
+        this.notWorkingDaysMapper = notWorkingDaysMapper;
     }
 
     /**
@@ -143,7 +149,7 @@ public class AccountingService {
      * @param info причина.
      * @return сущность с данными сотрудника
      */
-    public NotWorkingDays setNotWorkingDays(Long id, LocalDate start, LocalDate end, String info) {
+    public NotWorkingDaysDto setNotWorkingDays(Long id, LocalDate start, LocalDate end, String info) {
         Employee employee = employeeRepository.findById(id).orElse(null);
         if (employee == null) {
             return null;
@@ -154,7 +160,7 @@ public class AccountingService {
             notWorkingDays.setFinishDate(end);
             notWorkingDays.setComment(info);
             notWorkingDaysRepository.save(notWorkingDays);
-            return notWorkingDays;
+            return notWorkingDaysMapper.toDto(notWorkingDays);
         }
     }
 
@@ -163,15 +169,17 @@ public class AccountingService {
      * @param id сотрудника.
      * @return коллекция нерабочих дней.
      */
-        public List<NotWorkingDays> getNotWorkingDays (Long id, String com){
+        public List<NotWorkingDaysDto> getNotWorkingDays (Long id, String com){
+            List<NotWorkingDays> notWorkingDays = null;
             if (null != id && null != com) {
-                return notWorkingDaysRepository.getNotWorkingDaysByCommentsAndId(id,com);
+                notWorkingDays =  notWorkingDaysRepository.getNotWorkingDaysByCommentsAndId(id,com);
             } else if (null != com) {
-                return notWorkingDaysRepository.getNotWorkingDaysByComments(com);
+                notWorkingDays = notWorkingDaysRepository.getNotWorkingDaysByComments(com);
             } else if(null != id) {
-                return notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
-            } else
-            return null;
+                notWorkingDays = notWorkingDaysRepository.getNotWorkingDaysByEmployee_Id(id);
+            }
+            return notWorkingDays != null ? notWorkingDays.stream().
+                    map(notWorkingDaysMapper::toDto).collect(Collectors.toList()) : null;
         }
 
     /**

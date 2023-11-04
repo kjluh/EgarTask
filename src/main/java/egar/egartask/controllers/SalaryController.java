@@ -1,7 +1,7 @@
 package egar.egartask.controllers;
 
+import egar.egartask.dto.EmpDtoWithSalary;
 import egar.egartask.dto.EmpToSalary;
-import egar.egartask.entites.Employee;
 import egar.egartask.service.SalaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -74,9 +74,9 @@ public class SalaryController {
             }
     )
     @PatchMapping("/{id}/")
-    public ResponseEntity<Employee> setSalary(@PathVariable Long id,
-                                              @RequestParam Integer sal) {
-        Employee employee = salaryService.setSalary(id, sal);
+    public ResponseEntity<EmpDtoWithSalary> setSalary(@PathVariable Long id,
+                                                      @RequestParam Integer sal) {
+        EmpDtoWithSalary employee = salaryService.setSalary(id, sal);
         if (null == employee) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

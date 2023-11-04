@@ -1,7 +1,9 @@
 package egar.egartask.service;
 
+import egar.egartask.dto.DepartmentDto;
 import egar.egartask.entites.Department;
 import egar.egartask.entites.PostEmployee;
+import egar.egartask.mapper.DepartmentMapper;
 import egar.egartask.repository.DepartmentRepository;
 import egar.egartask.repository.PostEmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final DepartmentMapper departmentMapper;
 
-    public DepartmentService(DepartmentRepository departmentRepository) {
+    public DepartmentService(DepartmentRepository departmentRepository,
+                             DepartmentMapper departmentMapper) {
         this.departmentRepository = departmentRepository;
+        this.departmentMapper = departmentMapper;
     }
 
     /**
@@ -22,8 +27,8 @@ public class DepartmentService {
      * @return отдел.
      */
     @Transactional
-    public Department saveDepartment(Department department) {
-        return departmentRepository.save(department);
+    public DepartmentDto saveDepartment(Department department) {
+        return departmentMapper.toDepartmentDto(departmentRepository.save(department));
     }
 
     /**
@@ -31,8 +36,9 @@ public class DepartmentService {
      * @param id отдела.
      * @return отдел.
      */
-    public Department getDepartment(Long id) {
-        return departmentRepository.findById(id).orElse(null);
+    public DepartmentDto getDepartment(Long id) {
+        Department department = departmentRepository.findById(id).orElse(null);
+        return department != null ? departmentMapper.toDepartmentDto(department) : null;
     }
 
     /**
@@ -41,8 +47,8 @@ public class DepartmentService {
      * @return отдел.
      */
     @Transactional
-    public Department patchDepartment(Department department) {
-        return departmentRepository.update(department);
+    public DepartmentDto patchDepartment(Department department) {
+        return departmentMapper.toDepartmentDto(departmentRepository.update(department));
     }
 
     /**
@@ -51,12 +57,12 @@ public class DepartmentService {
      * @return удаленный отдел.
      */
     @Transactional
-    public Department deleteDepartment(Long id) {
+    public DepartmentDto deleteDepartment(Long id) {
         Department department = departmentRepository.findById(id).orElse(null);
         if (null == department) {
             return null;
         } else
             departmentRepository.delete(department);
-        return department;
+        return departmentMapper.toDepartmentDto(department);
     }
 }

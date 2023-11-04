@@ -1,6 +1,7 @@
 package egar.egartask.controllers;
 
 import egar.egartask.dto.EmpDto;
+import egar.egartask.dto.NotWorkingDaysDto;
 import egar.egartask.dto.WorkTimeDto;
 import egar.egartask.dto.WorkingTimeDto;
 import egar.egartask.entites.NotWorkingDays;
@@ -163,11 +164,11 @@ public class AccountingController {
             }
     )
     @PostMapping("/NWD/{id}")
-    public ResponseEntity<NotWorkingDays> setNotWorkingDays(@PathVariable Long id,
-                                                            @RequestParam LocalDate start,
-                                                            @RequestParam LocalDate end,
-                                                            @RequestParam String info) {
-        NotWorkingDays notWorkingDays = accountingService.setNotWorkingDays(id, start, end, info);
+    public ResponseEntity<NotWorkingDaysDto> setNotWorkingDays(@PathVariable Long id,
+                                                               @RequestParam LocalDate start,
+                                                               @RequestParam LocalDate end,
+                                                               @RequestParam String info) {
+        NotWorkingDaysDto notWorkingDays = accountingService.setNotWorkingDays(id, start, end, info);
         if (null == notWorkingDays) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -185,7 +186,7 @@ public class AccountingController {
             }
     )
     @GetMapping("/NWD")
-    public ResponseEntity<List<NotWorkingDays>> getNotWorkingDays(
+    public ResponseEntity<List<NotWorkingDaysDto>> getNotWorkingDays(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String comment
     ) {

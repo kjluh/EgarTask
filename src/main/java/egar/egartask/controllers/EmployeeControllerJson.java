@@ -36,7 +36,7 @@ public class EmployeeControllerJson {
             }
     )
     @PostMapping()
-    public ResponseEntity<Employee> createEmployee(@RequestBody EmpDto empDto) {
+    public ResponseEntity<EmpDto> createEmployee(@RequestBody EmpDto empDto) {
         return ResponseEntity.ok(employeeService.save(empDto));
     }
 
@@ -81,7 +81,7 @@ public class EmployeeControllerJson {
             }
     )
     @GetMapping()
-    public ResponseEntity<List<Employee>> getEmployee(
+    public ResponseEntity<List<EmpDto>> getEmployee(
             @RequestParam("name") String name,
             @RequestParam("family") String family) {
         return ResponseEntity.ok(employeeService.get(name, family));
@@ -107,12 +107,12 @@ public class EmployeeControllerJson {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
-        Employee employee = employeeService.find(id);
-        if (null == employee) {
+    public ResponseEntity<EmpDto> getEmployee(@PathVariable Long id) {
+        EmpDto empDto = employeeService.findDto(id);
+        if (null == empDto) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.ok(empDto);
     }
 
     @Operation(

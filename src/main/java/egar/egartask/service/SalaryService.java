@@ -1,9 +1,11 @@
 package egar.egartask.service;
 
+import egar.egartask.dto.EmpDtoWithSalary;
 import egar.egartask.dto.EmpToSalary;
 import egar.egartask.entites.Employee;
 import egar.egartask.entites.PostEmployee;
 import egar.egartask.exception.MyException;
+import egar.egartask.mapper.EmployeeMapper;
 import egar.egartask.repository.PostEmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +23,16 @@ public class SalaryService {
 
     private final PostEmployeeRepository postEmployeeRepository;
 
-    public SalaryService(EmployeeService employeeService, AccountingService accountingService, PostEmployeeRepository postEmployeeRepository) {
+    public SalaryService(EmployeeService employeeService, AccountingService accountingService, PostEmployeeRepository postEmployeeRepository,
+                         EmployeeMapper employeeMapper) {
         this.employeeService = employeeService;
         this.accountingService = accountingService;
         this.postEmployeeRepository = postEmployeeRepository;
+        this.employeeMapper = employeeMapper;
     }
 
     private Logger logger = LoggerFactory.getLogger(SalaryService.class);
+    private final EmployeeMapper employeeMapper;
 
     /**
      * Получение списка сотрудников с отработанными часами и зп.
@@ -90,14 +95,13 @@ public class SalaryService {
      * @param salary зп.
      * @return сотрудник.
      */
-    public Employee setSalary(Long id, Integer salary) {
+    public EmpDtoWithSalary setSalary(Long id, Integer salary) {
         Employee employee = employeeService.find(id);
         if (null != employee) {
             employee.setSalary(salary);
             employeeService.save(employee);
-
         }
-        return employee;
+        return employeeMapper.toDtoWithSalary(employee);
     }
 
     /**

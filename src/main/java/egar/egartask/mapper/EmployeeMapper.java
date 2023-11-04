@@ -1,6 +1,7 @@
 package egar.egartask.mapper;
 
 import egar.egartask.dto.EmpDto;
+import egar.egartask.dto.EmpDtoWithSalary;
 import egar.egartask.dto.WorkingTimeDto;
 import egar.egartask.entites.Employee;
 import org.mapstruct.Mapper;
@@ -13,6 +14,10 @@ public interface EmployeeMapper {
     @Mapping(source = "department.departmentName", target = "departmentName")
     @Mapping(source = "postEmployee.postName", target = "postEmployeeName")
     EmpDto toDto(Employee employee);
+
+    @Mapping(source = "department.departmentName", target = "departmentName")
+    @Mapping(source = "postEmployee.postName", target = "postEmployeeName")
+    EmpDtoWithSalary toDtoWithSalary (Employee employee);
 
     Employee toEmp(EmpDto empDto);
 

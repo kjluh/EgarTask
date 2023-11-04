@@ -1,5 +1,6 @@
 package egar.egartask.controllers;
 
+import egar.egartask.dto.PostEmployeeDto;
 import egar.egartask.entites.PostEmployee;
 import egar.egartask.service.DepartmentService;
 import egar.egartask.service.PostService;
@@ -37,8 +38,8 @@ public class PostController {
             }
     )
     @PostMapping()
-    public ResponseEntity<PostEmployee> createPostEmployee(@RequestBody PostEmployee postEmployee){
-        PostEmployee employee =postService.createPostEmployee(postEmployee);
+    public ResponseEntity<PostEmployeeDto> createPostEmployee(@RequestBody PostEmployee postEmployee){
+        PostEmployeeDto employee =postService.createPostEmployee(postEmployee);
         if (null== employee) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -61,8 +62,8 @@ public class PostController {
     )
 
     @PatchMapping()
-    public ResponseEntity<PostEmployee> updatePostEmployee(@RequestBody PostEmployee postEmployee){
-        PostEmployee employee = postService.updatePostEmployee(postEmployee);
+    public ResponseEntity<PostEmployeeDto> updatePostEmployee(@RequestBody PostEmployee postEmployee){
+        PostEmployeeDto employee = postService.updatePostEmployee(postEmployee);
         if (null== employee) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -84,8 +85,8 @@ public class PostController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<PostEmployee> getPostEmployee(@PathVariable Long id){
-        PostEmployee employee =postService.getPostEmployee(id);
+    public ResponseEntity<PostEmployeeDto> getPostEmployee(@PathVariable Long id){
+        PostEmployeeDto employee =postService.getPostEmployee(id);
         if (null== employee) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -107,8 +108,8 @@ public class PostController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<PostEmployee> deletePostEmployee(@PathVariable Long id){
-        PostEmployee employee =postService.deletePostEmployee(id);
+    public ResponseEntity<PostEmployeeDto> deletePostEmployee(@PathVariable Long id){
+        PostEmployeeDto employee =postService.deletePostEmployee(id);
         if (null== employee) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
