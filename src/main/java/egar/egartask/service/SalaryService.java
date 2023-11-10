@@ -74,6 +74,7 @@ public class SalaryService {
         EmpToSalary eNew = new EmpToSalary();
         eNew.setName(eOld.getName());
         eNew.setFamily(eOld.getFamily());
+        eNew.setPostEmployeeName(eOld.getPostEmployee().getPostName());
         try {
             eNew.setDepartmentName(eOld.getDepartment().getDepartmentName());
             eNew.setWorkingTime(accountingService.workingTime(eOld.getId())

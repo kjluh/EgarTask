@@ -8,6 +8,7 @@ import egar.egartask.repository.EmployeeRepository;
 import egar.egartask.repository.PostEmployeeRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
